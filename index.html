@@ -67,19 +67,19 @@
       align-items: center;
       justify-content: space-between;
       margin-bottom: 12px;
-      gap: 10px;
+      gap: 8px;
     }
     .day-selector-btn {
       display: flex;
       align-items: center;
-      gap: 8px;
+      gap: 6px;
       background: var(--surface);
       border: 1px solid var(--border);
-      padding: 8px 14px;
+      padding: 8px 12px;
       border-radius: 30px;
       cursor: pointer;
       font-weight: 700;
-      font-size: 14px;
+      font-size: 13px;
       color: var(--text);
       box-shadow: var(--shadow);
     }
@@ -87,23 +87,23 @@
       background: var(--primary);
       color: #fff;
       font-size: 11px;
-      padding: 2px 7px;
+      padding: 2px 6px;
       border-radius: 12px;
     }
     .top-stats {
       display: flex;
       align-items: center;
-      gap: 8px;
+      gap: 6px;
     }
     .stat-pill {
       display: flex;
       align-items: center;
-      gap: 5px;
+      gap: 4px;
       background: var(--surface);
       border: 1px solid var(--border);
-      padding: 6px 12px;
+      padding: 6px 10px;
       border-radius: 20px;
-      font-size: 13px;
+      font-size: 12px;
       font-weight: 700;
     }
     .icon-btn {
@@ -118,6 +118,10 @@
       justify-content: center;
       cursor: pointer;
       font-size: 16px;
+      transition: transform 0.15s;
+    }
+    .icon-btn:active {
+      transform: scale(0.92);
     }
 
     /* Progress Bar */
@@ -179,7 +183,7 @@
     .card-container {
       flex: 1;
       perspective: 1000px;
-      min-height: 400px;
+      min-height: 390px;
       display: flex;
       margin-bottom: 14px;
     }
@@ -201,7 +205,7 @@
       background: var(--surface);
       border: 1px solid var(--border);
       border-radius: var(--radius);
-      padding: 24px 20px;
+      padding: 22px 18px;
       box-shadow: var(--shadow);
       display: flex;
       flex-direction: column;
@@ -258,7 +262,7 @@
       font-family: 'Courier New', monospace;
       font-size: 16px;
       color: var(--text-muted);
-      margin-bottom: 16px;
+      margin-bottom: 14px;
     }
     .key-box {
       background: rgba(245, 158, 11, 0.1);
@@ -266,7 +270,7 @@
       padding: 10px 14px;
       border-radius: var(--radius-sm);
       display: inline-block;
-      max-width: 90%;
+      max-width: 92%;
     }
     .key-title {
       font-size: 11px;
@@ -292,7 +296,7 @@
       font-size: 26px;
       font-weight: 800;
       color: var(--success);
-      margin-bottom: 14px;
+      margin-bottom: 12px;
     }
     .story-card {
       background: rgba(255, 255, 255, 0.04);
@@ -300,7 +304,7 @@
       padding: 12px 14px;
       border-radius: 0 10px 10px 0;
       text-align: left;
-      margin-bottom: 14px;
+      margin-bottom: 12px;
     }
     .story-label {
       font-size: 11px;
@@ -416,7 +420,7 @@
       left: 0;
       width: 100vw;
       height: 100vh;
-      background: rgba(0, 0, 0, 0.6);
+      background: rgba(0, 0, 0, 0.65);
       backdrop-filter: blur(6px);
       z-index: 999;
       display: none;
@@ -477,6 +481,75 @@
     }
     .day-cell.active.done {
       color: #fff;
+    }
+
+    /* SEARCH MODAL DEDICATED */
+    .search-input-box {
+      position: relative;
+      margin-bottom: 14px;
+    }
+    .search-modal-input {
+      width: 100%;
+      padding: 14px 44px 14px 16px;
+      background: var(--bg);
+      border: 2px solid var(--primary);
+      border-radius: var(--radius-sm);
+      color: var(--text);
+      font-size: 16px;
+      font-weight: 600;
+      outline: none;
+    }
+    .search-clear-btn {
+      position: absolute;
+      right: 12px;
+      top: 50%;
+      transform: translateY(-50%);
+      background: transparent;
+      border: none;
+      color: var(--text-muted);
+      font-size: 18px;
+      cursor: pointer;
+    }
+    .search-results-list {
+      overflow-y: auto;
+      max-height: 60vh;
+      display: flex;
+      flex-direction: column;
+      gap: 8px;
+    }
+    .search-card-item {
+      background: var(--bg);
+      border: 1px solid var(--border);
+      border-radius: 14px;
+      padding: 12px 14px;
+      cursor: pointer;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      transition: background 0.15s;
+    }
+    .search-card-item:hover, .search-card-item:active {
+      background: var(--surface-card);
+      border-color: var(--primary);
+    }
+    .search-item-left {
+      display: flex;
+      flex-direction: column;
+      gap: 2px;
+    }
+    .search-item-word {
+      font-size: 16px;
+      font-weight: 800;
+      color: var(--text);
+    }
+    .search-item-uz {
+      font-size: 13px;
+      color: var(--success);
+      font-weight: 600;
+    }
+    .search-item-key {
+      font-size: 11px;
+      color: var(--warning);
     }
 
     /* Mode Panels (Tests) */
@@ -611,6 +684,9 @@
       </button>
 
       <div class="top-stats">
+        <!-- SEARCH BUTTON (DEDICATED) -->
+        <button class="icon-btn" id="open-search-modal" title="So'zlarni qidirish">🔍</button>
+
         <div class="stat-pill" title="Yodlangan">
           <span style="color: var(--success);">✅</span>
           <span id="stat-mastered">0</span>/100
@@ -725,7 +801,7 @@
 
     <!-- View 5: Vocab List Table -->
     <div class="mode-panel" id="view-table">
-      <input type="text" class="typing-input" id="table-search" placeholder="🔍 So'zni qidirish..." style="font-size: 14px; text-align: left; padding: 10px 14px; margin-bottom: 10px;">
+      <input type="text" class="typing-input" id="table-search" placeholder="🔍 Ro'yxatdan qidirish..." style="font-size: 14px; text-align: left; padding: 10px 14px; margin-bottom: 10px;">
       <div class="table-container" id="table-list"></div>
     </div>
   </div>
@@ -762,6 +838,24 @@
         <button class="icon-btn" id="close-day-modal">✕</button>
       </div>
       <div class="days-grid" id="days-grid"></div>
+    </div>
+  </div>
+
+  <!-- Dedicated SEARCH MODAL -->
+  <div class="modal-backdrop" id="search-modal">
+    <div class="modal-sheet" style="max-height: 85vh;">
+      <div class="modal-header">
+        <span class="modal-title">🔍 So'zlarni Qidirish</span>
+        <button class="icon-btn" id="close-search-modal">✕</button>
+      </div>
+      <div class="search-input-box">
+        <input type="text" class="search-modal-input" id="global-search-input" placeholder="Inglizcha, o'zbekcha yoki kalit so'z...">
+        <button class="search-clear-btn" id="clear-search-btn" style="display:none;">✕</button>
+      </div>
+      <div style="font-size: 12px; color: var(--text-muted); margin-bottom: 8px;">
+        <span id="search-results-count">0 ta so'z topildi</span> • Bosib kartada oching
+      </div>
+      <div class="search-results-list" id="search-results-list"></div>
     </div>
   </div>
 
@@ -860,10 +954,10 @@
       return list.filter(w => w.set === parseInt(currentChunk));
     }
 
-    async function loadDay(d) {
+    async function loadDay(d, targetWordIndex = 0) {
       currentDay = d;
       localStorage.setItem('lingo_day', d.toString());
-      currentIndex = 0;
+      currentIndex = targetWordIndex;
       updateHeader();
 
       const words = await fetchWords(d);
@@ -981,16 +1075,6 @@
       document.getElementById('btn-next').click();
       renderStats();
     };
-
-    // Keyboard Shortcuts
-    document.addEventListener('keydown', (e) => {
-      if (currentMode !== 'flashcard') return;
-      if (e.code === 'Space') { e.preventDefault(); flipCard.classList.toggle('flipped'); }
-      else if (e.code === 'ArrowRight') document.getElementById('btn-next').click();
-      else if (e.code === 'ArrowLeft') document.getElementById('btn-prev').click();
-      else if (e.key === '1') document.getElementById('btn-repeat').click();
-      else if (e.key === '2') document.getElementById('btn-master').click();
-    });
 
     // Chunks
     document.querySelectorAll('.chunk-chip').forEach(btn => {
@@ -1122,7 +1206,7 @@
       words.forEach(w => {
         const div = document.createElement('div');
         div.className = 'table-item';
-        div.innerHTML = '<div><div class="table-word">' + w.word + ' <span style="font-size:12px;font-weight:400;color:var(--text-muted);">' + w.phonetic + '</span></div><div class="table-uz">' + w.uz + '</div></div><button class="audio-btn" style="width:34px;height:34px;font-size:14px;" onclick="speak(\'' + w.word + '\')">🔊</button>';
+        div.innerHTML = '<div><div class="table-word">' + w.word + ' <span style="font-size:12px;font-weight:400;color:var(--text-muted);">' + w.phonetic + '</span></div><div class="table-uz">' + w.uz + '</div></div><button class="audio-btn" style="width:34px;height:34px;font-size:14px;" onclick="speak(\\'' + w.word + '\\')">🔊</button>';
         list.appendChild(div);
       });
     }
@@ -1158,6 +1242,87 @@
       }
     }
 
+    // SEARCH MODAL LOGIC (DEDICATED SEARCH)
+    const searchModal = document.getElementById('search-modal');
+    const searchInput = document.getElementById('global-search-input');
+    const searchList = document.getElementById('search-results-list');
+    const searchCount = document.getElementById('search-results-count');
+    const clearSearchBtn = document.getElementById('clear-search-btn');
+
+    document.getElementById('open-search-modal').onclick = () => {
+      searchModal.style.display = 'flex';
+      searchInput.value = '';
+      clearSearchBtn.style.display = 'none';
+      performSearch('');
+      setTimeout(() => searchInput.focus(), 100);
+    };
+
+    document.getElementById('close-search-modal').onclick = () => {
+      searchModal.style.display = 'none';
+    };
+    searchModal.onclick = (e) => {
+      if (e.target === searchModal) searchModal.style.display = 'none';
+    };
+
+    clearSearchBtn.onclick = () => {
+      searchInput.value = '';
+      clearSearchBtn.style.display = 'none';
+      performSearch('');
+      searchInput.focus();
+    };
+
+    searchInput.oninput = (e) => {
+      const q = e.target.value.trim();
+      clearSearchBtn.style.display = q ? 'block' : 'none';
+      performSearch(q);
+    };
+
+    function performSearch(query) {
+      searchList.innerHTML = '';
+      const allWords = dayCache[currentDay] || [];
+      const q = query.toLowerCase();
+
+      const matched = query ? allWords.filter(w => 
+        w.word.toLowerCase().includes(q) || 
+        w.uz.toLowerCase().includes(q) || 
+        (w.key && w.key.toLowerCase().includes(q))
+      ) : allWords.slice(0, 30); // Show first 30 if empty
+
+      searchCount.textContent = (query ? matched.length : allWords.length) + ' ta so`z topildi';
+
+      if (matched.length === 0) {
+        searchList.innerHTML = '<div style="text-align:center;padding:30px;color:var(--text-muted);">Hech narsa topilmadi 😕</div>';
+        return;
+      }
+
+      matched.forEach(w => {
+        const item = document.createElement('div');
+        item.className = 'search-card-item';
+        item.innerHTML = `
+          <div class="search-item-left">
+            <div class="search-item-word">${w.word} <span style="font-size:12px;font-weight:400;color:var(--text-muted);">${w.phonetic || ''}</span></div>
+            <div class="search-item-uz">${w.uz}</div>
+            <div class="search-item-key">🧠 Kalit: ${w.key || '-'}</div>
+          </div>
+          <button class="audio-btn" style="width:36px;height:36px;font-size:15px;" onclick="event.stopPropagation(); speak('${w.word}')">🔊</button>
+        `;
+        item.onclick = () => {
+          const targetIndex = allWords.findIndex(x => x.id === w.id);
+          if (targetIndex !== -1) {
+            currentIndex = targetIndex;
+            document.querySelectorAll('.nav-tab').forEach(t => t.classList.remove('active'));
+            document.querySelector('.nav-tab[data-mode="flashcard"]').classList.add('active');
+            currentMode = 'flashcard';
+            document.querySelectorAll('.mode-panel').forEach(p => p.style.display = 'none');
+            document.getElementById('view-flashcard').style.display = 'flex';
+            renderCard();
+          }
+          searchModal.style.display = 'none';
+        };
+        searchList.appendChild(item);
+      });
+    }
+
     // Theme Toggle
     document.getElementById('theme-btn').onclick = () => {
       const curr = document.documentElement.getAttribute('data-theme');
@@ -1174,3 +1339,4 @@
   </script>
 </body>
 </html>
+http://googleusercontent.com/action_card_content/ec80e2cc-8a99-4bd5-9a90-dba50335116c
