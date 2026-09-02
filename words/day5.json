@@ -100,8 +100,3 @@
   {"id": 499, "day": 5, "set": 5, "word": "Pulse", "pos": "ot", "phonetic": "/pʌls/", "uz": "puls, tomir urishi", "key": "Pul", "story": "Qo'lidagi tomir urishini sanab ko'rib, yuragi daqiqasiga 70 marta urayotganini bildi.", "example": "Her pulse was calm and steady.", "ex_uz": "Uning tomir urishi xotirjam va bir maromda edi."},
   {"id": 500, "day": 5, "set": 5, "word": "Breathe", "pos": "fe'l", "phonetic": "/briːð/", "uz": "nafas olmoq", "key": "Bir zum", "story": "Tog' cho'qqisida bir zum to'xtab, ko'krak qafasini to'ldirib erkin nafas oldi!", "example": "Inhale deeply and breathe out slowly.", "ex_uz": "Chuqur nafas oling va sekin nafas chiqaring."}
 ]
-
-print("Day 5 words verified:", len(day5_words))
-EOF
-python3 /working_dir/generate_day5.py
-}}
