@@ -1,0 +1,933 @@
+<!DOCTYPE html>
+<html lang="uz">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Lingo5000 — Mnemonik Ingliz Tili Platformasi</title>
+  <style>
+    :root {
+      --primary: #6366f1;
+      --primary-hover: #4f46e5;
+      --primary-light: #e0e7ff;
+      --success: #10b981;
+      --warning: #f59e0b;
+      --danger: #ef4444;
+      --bg: #0f172a;
+      --card-bg: #1e293b;
+      --card-border: #334155;
+      --text: #f8fafc;
+      --text-muted: #94a3b8;
+      --radius: 16px;
+      --shadow: 0 10px 25px -5px rgba(0, 0, 0, 0.4);
+    }
+    [data-theme="light"] {
+      --bg: #f8fafc;
+      --card-bg: #ffffff;
+      --card-border: #e2e8f0;
+      --text: #0f172a;
+      --text-muted: #64748b;
+      --primary-light: #e0e7ff;
+      --shadow: 0 10px 25px -5px rgba(0, 0, 0, 0.08);
+    }
+    * { box-sizing: border-box; margin: 0; padding: 0; font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif; transition: background-color 0.2s, color 0.2s; }
+    body { background-color: var(--bg); color: var(--text); min-height: 100vh; display: flex; flex-direction: column; align-items: center; padding: 16px; }
+    .container { width: 100%; max-width: 900px; display: flex; flex-direction: column; gap: 18px; padding-bottom: 50px; }
+    header { display: flex; justify-content: space-between; align-items: center; background: var(--card-bg); border: 1px solid var(--card-border); padding: 16px 22px; border-radius: var(--radius); box-shadow: var(--shadow); flex-wrap: wrap; gap: 12px; }
+    .brand { display: flex; align-items: center; gap: 12px; }
+    .logo-badge { background: linear-gradient(135deg, #ec4899, #8b5cf6, #3b82f6); color: white; font-weight: 900; font-size: 22px; padding: 8px 16px; border-radius: 12px; box-shadow: 0 4px 15px rgba(139, 92, 246, 0.4); }
+    .brand-title h1 { font-size: 20px; font-weight: 800; }
+    .brand-title p { font-size: 12px; color: var(--text-muted); }
+    .header-actions { display: flex; align-items: center; gap: 8px; }
+    .btn-icon { background: transparent; border: 1px solid var(--card-border); color: var(--text); padding: 8px 12px; border-radius: 10px; cursor: pointer; font-size: 13px; display: flex; align-items: center; gap: 6px; }
+    .btn-icon:hover { background: var(--card-border); }
+    .goal-card { background: var(--card-bg); border: 1px solid var(--card-border); border-radius: var(--radius); padding: 18px 22px; box-shadow: var(--shadow); display: flex; flex-direction: column; gap: 12px; }
+    .goal-header { display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 8px; }
+    .goal-title { font-size: 15px; font-weight: 700; display: flex; align-items: center; gap: 8px; }
+    .streak-badge { background: rgba(245, 158, 11, 0.15); color: var(--warning); border: 1px solid rgba(245, 158, 11, 0.3); padding: 4px 10px; border-radius: 20px; font-size: 12px; font-weight: 700; }
+    .progress-bar-container { width: 100%; height: 14px; background: var(--card-border); border-radius: 10px; overflow: hidden; }
+    .progress-bar { height: 100%; width: 0%; background: linear-gradient(90deg, #ec4899, #6366f1, #10b981); border-radius: 10px; transition: width 0.4s ease; }
+    .goal-stats { display: flex; justify-content: space-between; font-size: 13px; color: var(--text-muted); }
+    .calendar-card { background: var(--card-bg); border: 1px solid var(--card-border); border-radius: var(--radius); padding: 16px 20px; box-shadow: var(--shadow); }
+    .calendar-toggle-btn { display: flex; justify-content: space-between; align-items: center; cursor: pointer; user-select: none; }
+    .calendar-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(75px, 1fr)); gap: 8px; margin-top: 14px; max-height: 240px; overflow-y: auto; padding-right: 4px; }
+    .day-pill { background: var(--bg); border: 1px solid var(--card-border); border-radius: 10px; padding: 8px 4px; text-align: center; font-size: 12px; font-weight: 600; cursor: pointer; display: flex; flex-direction: column; gap: 2px; }
+    .day-pill:hover { border-color: var(--primary); }
+    .day-pill.active { background: var(--primary); color: white; border-color: var(--primary); }
+    .day-pill.completed { border-color: var(--success); color: var(--success); }
+    .day-pill.active.completed { color: white; }
+    .active-day-banner { background: linear-gradient(135deg, rgba(99, 102, 241, 0.1), rgba(16, 185, 129, 0.08)); border: 1px solid rgba(99, 102, 241, 0.3); border-radius: var(--radius); padding: 14px 20px; display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 10px; }
+    .day-info h2 { font-size: 17px; font-weight: 800; color: var(--text); }
+    .day-info p { font-size: 13px; color: var(--text-muted); }
+    .audio-toolbar { display: flex; align-items: center; gap: 10px; background: var(--card-bg); border: 1px solid var(--card-border); border-radius: 10px; padding: 6px 14px; font-size: 12px; }
+    .audio-select { background: var(--bg); color: var(--text); border: 1px solid var(--card-border); border-radius: 6px; padding: 4px 6px; font-size: 12px; outline: none; }
+    .chunk-selector { display: flex; gap: 6px; overflow-x: auto; padding-bottom: 4px; }
+    .chunk-btn { flex: 1; white-space: nowrap; padding: 10px 12px; background: var(--card-bg); border: 1px solid var(--card-border); color: var(--text-muted); border-radius: 10px; font-size: 12px; font-weight: 700; cursor: pointer; text-align: center; }
+    .chunk-btn.active { background: var(--primary); color: white; border-color: var(--primary); }
+    .mode-nav { display: flex; background: var(--card-bg); border: 1px solid var(--card-border); border-radius: var(--radius); padding: 6px; gap: 6px; overflow-x: auto; }
+    .mode-btn { flex: 1; white-space: nowrap; padding: 10px 12px; background: transparent; border: none; color: var(--text-muted); font-size: 13px; font-weight: 600; border-radius: 10px; cursor: pointer; display: flex; align-items: center; justify-content: center; gap: 6px; }
+    .mode-btn.active { background: var(--card-border); color: var(--text); }
+    .flashcard-section { display: flex; flex-direction: column; align-items: center; gap: 16px; }
+    .flashcard-wrapper { perspective: 1200px; width: 100%; height: 420px; }
+    .flashcard { width: 100%; height: 100%; position: relative; transform-style: preserve-3d; transition: transform 0.6s cubic-bezier(0.4, 0, 0.2, 1); cursor: pointer; border-radius: 20px; }
+    .flashcard.flipped { transform: rotateY(180deg); }
+    .card-face { position: absolute; width: 100%; height: 100%; backface-visibility: hidden; border-radius: 20px; padding: 22px 26px; display: flex; flex-direction: column; justify-content: space-between; border: 1px solid var(--card-border); box-shadow: var(--shadow); background: var(--card-bg); }
+    .card-back { transform: rotateY(180deg); background: linear-gradient(145deg, var(--card-bg), rgba(99, 102, 241, 0.08)); }
+    .card-top { display: flex; justify-content: space-between; align-items: center; }
+    .badge-tag { font-size: 11px; text-transform: uppercase; padding: 4px 10px; border-radius: 20px; background: rgba(99, 102, 241, 0.15); color: #818cf8; font-weight: 700; }
+    .audio-btn-round { background: rgba(99, 102, 241, 0.2); color: #818cf8; border: none; width: 44px; height: 44px; border-radius: 50%; display: flex; align-items: center; justify-content: center; cursor: pointer; font-size: 18px; }
+    .audio-btn-round:hover { background: var(--primary); color: white; transform: scale(1.08); }
+    .card-center { text-align: center; margin: auto 0; }
+    .word-title { font-size: 40px; font-weight: 800; color: var(--text); letter-spacing: -0.5px; margin-bottom: 4px; }
+    .phonetic-sub { font-size: 18px; color: var(--text-muted); font-family: monospace; margin-bottom: 12px; }
+    .mnemonic-box { background: rgba(245, 158, 11, 0.1); border: 1px dashed rgba(245, 158, 11, 0.4); border-radius: 12px; padding: 12px 16px; margin-top: 8px; text-align: left; }
+    .mnemonic-label { font-size: 11px; font-weight: 800; color: var(--warning); text-transform: uppercase; margin-bottom: 4px; display: flex; align-items: center; gap: 5px; }
+    .mnemonic-key { font-size: 16px; font-weight: 800; color: var(--text); margin-bottom: 4px; }
+    .mnemonic-story { font-size: 13px; color: #cbd5e1; line-height: 1.45; font-style: italic; }
+    .uz-title { font-size: 28px; font-weight: 800; color: #10b981; margin-bottom: 8px; }
+    .example-container { background: rgba(0,0,0,0.15); border-left: 3px solid var(--primary); padding: 12px 16px; border-radius: 0 10px 10px 0; text-align: left; }
+    .example-en { font-size: 14px; font-style: italic; color: var(--text); margin-bottom: 4px; }
+    .example-uz { font-size: 12px; color: var(--text-muted); }
+    .controls { display: flex; justify-content: space-between; width: 100%; gap: 10px; flex-wrap: wrap; }
+    .btn-act { flex: 1; min-width: 120px; padding: 14px 18px; border-radius: 12px; font-size: 14px; font-weight: 700; cursor: pointer; border: none; }
+    .btn-act-sec { background: var(--card-bg); border: 1px solid var(--card-border); color: var(--text); }
+    .btn-act-rep { background: rgba(239, 68, 68, 0.15); color: #f87171; border: 1px solid rgba(239, 68, 68, 0.3); }
+    .btn-act-rep:hover { background: #ef4444; color: white; }
+    .btn-act-mast { background: rgba(16, 185, 129, 0.15); color: #34d399; border: 1px solid rgba(16, 185, 129, 0.3); }
+    .btn-act-mast:hover { background: #10b981; color: white; }
+    .test-panel { background: var(--card-bg); border: 1px solid var(--card-border); border-radius: var(--radius); padding: 26px; box-shadow: var(--shadow); display: none; flex-direction: column; gap: 18px; }
+    .test-header { display: flex; justify-content: space-between; align-items: center; }
+    .test-prompt-card { text-align: center; padding: 22px; background: rgba(99, 102, 241, 0.06); border: 1px dashed var(--card-border); border-radius: 14px; }
+    .test-prompt-main { font-size: 30px; font-weight: 800; margin-bottom: 6px; }
+    .test-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; }
+    @media (max-width: 640px) { .test-grid { grid-template-columns: 1fr; } }
+    .test-opt { padding: 16px 20px; background: var(--card-bg); border: 1px solid var(--card-border); color: var(--text); border-radius: 12px; font-size: 15px; font-weight: 600; cursor: pointer; text-align: left; }
+    .test-opt:hover { border-color: var(--primary); }
+    .test-opt.correct { background: #10b981 !important; color: white !important; }
+    .test-opt.wrong { background: #ef4444 !important; color: white !important; }
+    .vocab-table-container { max-height: 480px; overflow-y: auto; border-radius: 10px; border: 1px solid var(--card-border); }
+    table { width: 100%; border-collapse: collapse; text-align: left; font-size: 13px; }
+    th, td { padding: 12px 14px; border-bottom: 1px solid var(--card-border); }
+    th { background: var(--card-border); font-weight: 700; position: sticky; top: 0; }
+    #confetti-canvas { position: fixed; top: 0; left: 0; width: 100vw; height: 100vh; pointer-events: none; z-index: 9999; }
+  </style>
+</head>
+<body>
+  <canvas id="confetti-canvas"></canvas>
+
+  <div class="container">
+    <header>
+      <div class="brand">
+        <div class="logo-badge">L5000</div>
+        <div class="brand-title">
+          <h1>Lingo5000 — Mnemonik Lug'at Tizimi</h1>
+          <p>Har kuni 100 ta so'z • Kulgili va hissiyotli xotira • Ovozli talaffuz</p>
+        </div>
+      </div>
+      <div class="header-actions">
+        <button class="btn-icon" id="import-btn" title="Keyingi kun so'zlarini yuklash">📥 So'z qo'shish</button>
+        <button class="btn-icon" id="theme-toggle">🌓 Mavzu</button>
+        <button class="btn-icon" id="reset-day-btn">🔄 Qayta</button>
+      </div>
+    </header>
+
+    <div class="goal-card">
+      <div class="goal-header">
+        <div class="goal-title">
+          <span>🎯 Kunlik Maqsad:</span>
+          <strong id="goal-counter">0 / 100</strong>
+          <span style="font-size: 13px; color: var(--primary); font-weight: 700;">(<span id="goal-percent">0</span>%)</span>
+        </div>
+        <div class="streak-badge">🔥 Streak: <span id="streak-days">1</span> kun</div>
+      </div>
+      <div class="progress-bar-container">
+        <div class="progress-bar" id="daily-progress"></div>
+      </div>
+      <div class="goal-stats">
+        <span>Yodlangan: <b id="mastered-count" style="color: var(--success);">0</b></span>
+        <span>Qaytarish kerak: <b id="review-count" style="color: var(--danger);">0</b></span>
+        <span>Qolgan: <b id="remaining-count" style="color: var(--warning);">100</b></span>
+      </div>
+    </div>
+
+    <div class="calendar-card">
+      <div class="calendar-toggle-btn" id="toggle-calendar">
+        <span style="font-size: 14px; font-weight: 700;">📅 50 Kunlik Taqvim Rejasi (Ochish / Yopish ▾)</span>
+        <span class="badge-tag" id="selected-day-label">Tanlangan: 1-kun</span>
+      </div>
+      <div class="calendar-grid" id="calendar-grid"></div>
+    </div>
+
+    <div class="active-day-banner">
+      <div class="day-info">
+        <h2 id="day-title-text">1-kun: Eng faol fe'llar va kundalik muloqot</h2>
+        <p id="day-progress-text">Bugungi 100 ta so'zdan: <b id="day-learned-count">0</b> yodlandi • <b id="day-remain-count">100</b> ta qoldi</p>
+      </div>
+      <div class="audio-toolbar">
+        <span>🔊 Tezlik:</span>
+        <select class="audio-select" id="speech-rate">
+          <option value="0.75">Sekin (0.75x)</option>
+          <option value="0.9" selected>Normal (0.9x)</option>
+          <option value="1.0">Tez (1.0x)</option>
+        </select>
+        <label style="display: flex; align-items: center; gap: 5px; cursor: pointer; margin-left: 6px;">
+          <input type="checkbox" id="auto-speak-toggle" checked>
+          <span>Avto-audio</span>
+        </label>
+      </div>
+    </div>
+
+    <div class="chunk-selector">
+      <button class="chunk-btn active" data-chunk="all">Barchasi (100 ta)</button>
+      <button class="chunk-btn" data-chunk="1">1-blok (1-20)</button>
+      <button class="chunk-btn" data-chunk="2">2-blok (21-40)</button>
+      <button class="chunk-btn" data-chunk="3">3-blok (41-60)</button>
+      <button class="chunk-btn" data-chunk="4">4-blok (61-80)</button>
+      <button class="chunk-btn" data-chunk="5">5-blok (81-100)</button>
+    </div>
+
+    <div class="mode-nav">
+      <button class="mode-btn active" data-mode="flashcard">🎴 Mnemonik Karta</button>
+      <button class="mode-btn" data-mode="listening">🎧 Audio Test</button>
+      <button class="mode-btn" data-mode="quiz">📝 4-Tanlovli Test</button>
+      <button class="mode-btn" data-mode="reverse">🔄 Teskari Test</button>
+      <button class="mode-btn" data-mode="typing">✍️ Diktant Mashqi</button>
+      <button class="mode-btn" data-mode="table">📋 Lug'at Jadvali</button>
+    </div>
+
+    <!-- 1. Flashcard -->
+    <div class="flashcard-section" id="view-flashcard">
+      <div class="flashcard-wrapper">
+        <div class="flashcard" id="main-card">
+          <!-- Front -->
+          <div class="card-face card-front">
+            <div class="card-top">
+              <span class="badge-tag" id="fc-pos">OT</span>
+              <span style="font-size: 13px; color: var(--text-muted);" id="fc-index">1 / 100</span>
+              <button class="audio-btn-round" id="fc-audio-front">🔊</button>
+            </div>
+            <div class="card-center">
+              <div class="word-title" id="fc-word">Puddle</div>
+              <div class="phonetic-sub" id="fc-phonetic">/ˈpʌdl/</div>
+              <div class="mnemonic-box">
+                <div class="mnemonic-label">🧠 Fonetik Kalit So'z:</div>
+                <div class="mnemonic-key" id="fc-key">Padval</div>
+                <div style="font-size: 12px; color: var(--text-muted);">Kartani bosing — kulgili xotira hikoyasini ko'ring</div>
+              </div>
+            </div>
+            <div style="text-align: center; font-size: 12px; color: var(--text-muted);">👆 Kartani bosing (Space) — O'zbekcha ma'nosi va hikoyasi</div>
+          </div>
+          <!-- Back -->
+          <div class="card-face card-back">
+            <div class="card-top">
+              <span class="badge-tag" style="background: rgba(16, 185, 129, 0.15); color: #34d399;">O'ZBEKCHA</span>
+              <button class="audio-btn-round" id="fc-audio-back">🔊</button>
+            </div>
+            <div class="card-center">
+              <div class="uz-title" id="fc-uz">ko'lmak (suv to'plami)</div>
+              <div class="mnemonic-box" style="margin-bottom: 12px;">
+                <div class="mnemonic-label">😂 Kulgili / Hissiyotli Xotira Hikoyasi:</div>
+                <div class="mnemonic-story" id="fc-story">To'yga yangi oq kastyum kiyib, shoshilib padvalga tushayotganimda bo'ynimgacha chuqur ko'lmakka tushib ketdim!</div>
+              </div>
+              <div class="example-container">
+                <div class="example-en" id="fc-example">Don't step into that muddy puddle.</div>
+                <div class="example-uz" id="fc-example-uz">U loyqa ko'lmakka qadam bosma.</div>
+              </div>
+            </div>
+            <div style="text-align: center; font-size: 12px; color: var(--text-muted);">🔄 Orqaga ag'darish uchun bosing</div>
+          </div>
+        </div>
+      </div>
+      <div class="controls">
+        <button class="btn-act btn-act-sec" id="btn-prev">⬅️ Oldingi</button>
+        <button class="btn-act btn-act-rep" id="btn-repeat">🔁 Qaytarish (1)</button>
+        <button class="btn-act btn-act-mast" id="btn-master">✅ Yodladim (2)</button>
+        <button class="btn-act btn-act-sec" id="btn-next">Keyingi ➡️</button>
+      </div>
+    </div>
+
+    <!-- 2. Listening Audio Test -->
+    <div class="test-panel" id="view-listening">
+      <div class="test-header">
+        <h3>🎧 Audio Eshitish Testi (Matn yashirin! Faqat ovozga qarab ma'nosini toping):</h3>
+        <span id="listening-score" style="font-weight: 700; color: var(--primary);">Ball: 0</span>
+      </div>
+      <div class="test-prompt-card">
+        <p style="font-size: 13px; color: var(--text-muted); margin-bottom: 12px;">Quloq soling va to'g'ri o'zbekcha tarjimani tanlang:</p>
+        <button class="audio-btn-round" id="listening-play-btn" style="margin: 0 auto; width: 64px; height: 64px; font-size: 26px;">🔊</button>
+      </div>
+      <div class="test-grid" id="listening-options"></div>
+    </div>
+
+    <!-- 3. Standard Quiz (EN -> UZ) -->
+    <div class="test-panel" id="view-quiz">
+      <div class="test-header">
+        <h3>📝 4-Tanlovli Test (Inglizcha ➔ O'zbekcha):</h3>
+        <span id="quiz-score" style="font-weight: 700; color: var(--primary);">Ball: 0</span>
+      </div>
+      <div class="test-prompt-card">
+        <div class="test-prompt-main" id="quiz-word">Puddle</div>
+        <button class="audio-btn-round" id="quiz-audio-btn" style="margin: 0 auto; width: 36px; height: 36px; font-size: 15px;">🔊</button>
+      </div>
+      <div class="test-grid" id="quiz-options"></div>
+    </div>
+
+    <!-- 4. Reverse Quiz (UZ -> EN) -->
+    <div class="test-panel" id="view-reverse">
+      <div class="test-header">
+        <h3>🔄 Teskari Test (O'zbekcha ➔ Inglizcha):</h3>
+        <span id="reverse-score" style="font-weight: 700; color: var(--primary);">Ball: 0</span>
+      </div>
+      <div class="test-prompt-card">
+        <div class="test-prompt-main" id="reverse-word" style="color: var(--success);">ko'lmak</div>
+      </div>
+      <div class="test-grid" id="reverse-options"></div>
+    </div>
+
+    <!-- 5. Typing / Dictation -->
+    <div class="test-panel" id="view-typing" style="align-items: center; text-align: center;">
+      <h3>✍️ Ovozli Diktant va Yozish Mashqi:</h3>
+      <div style="font-size: 24px; font-weight: 800; color: var(--success);" id="typing-uz-word">ko'lmak</div>
+      <button class="audio-btn-round" id="typing-play-audio" style="margin: 6px auto;">🔊 Talaffuzni eshitish</button>
+      <div style="font-size: 13px; color: var(--text-muted); font-style: italic;" id="typing-hint-len">Harflar soni: 6 ta • Kalit so'z: Padval</div>
+      <input type="text" id="typing-user-input" style="width: 100%; max-width: 420px; padding: 14px 20px; font-size: 20px; border-radius: 12px; border: 2px solid var(--card-border); background: var(--bg); color: var(--text); text-align: center; outline: none;" placeholder="Inglizcha so'zni yozing..." autocomplete="off">
+      <div id="typing-msg" style="font-weight: 700; min-height: 24px;"></div>
+      <button class="btn-act btn-act-sec" id="typing-skip-btn" style="max-width: 200px;">Keyingisi ➡️</button>
+    </div>
+
+    <!-- 6. Table List -->
+    <div class="test-panel" id="view-table">
+      <input type="text" id="table-search" style="width: 100%; padding: 12px 18px; border-radius: 10px; border: 1px solid var(--card-border); background: var(--bg); color: var(--text); font-size: 14px; outline: none;" placeholder="🔍 So'zni inglizcha, o'zbekcha yoki kalit so'z bo'yicha qidirish...">
+      <div class="vocab-table-container">
+        <table>
+          <thead>
+            <tr>
+              <th>№</th>
+              <th>Inglizcha</th>
+              <th>Talaffuz</th>
+              <th>O'zbekcha</th>
+              <th>🧠 Kalit so'z</th>
+              <th>😂 Xotira hikoyasi</th>
+              <th>Holat</th>
+              <th>Audio</th>
+            </tr>
+          </thead>
+          <tbody id="vocab-table-body"></tbody>
+        </table>
+      </div>
+    </div>
+  </div>
+
+  <script>
+    const dayThemesList = [
+      {"day": 1, "theme": "Eng faol fe'llar va kundalik muloqot", "level": "A1"},
+      {"day": 2, "theme": "Uy-ro'zg'or, xonadon va oila a'zolari", "level": "A1"},
+      {"day": 3, "theme": "Taomlar, oziq-ovqat va restoran", "level": "A1"},
+      {"day": 4, "theme": "Shahar, transport va yo'nalishlar", "level": "A1"},
+      {"day": 5, "theme": "Tana a'zolari, salomatlik va gigiyena", "level": "A1"},
+      {"day": 6, "theme": "Kiyim-kechak, ranglar va tashqi ko'rinish", "level": "A1-A2"},
+      {"day": 7, "theme": "His-tuyg'ular va inson xarakteri", "level": "A2"},
+      {"day": 8, "theme": "Vaqt, taqvim, fasllar va ob-havo", "level": "A2"},
+      {"day": 9, "theme": "Do'stlik, munosabatlar va suhbat", "level": "A2"},
+      {"day": 10, "theme": "Xaridlar, bozor va do'konlar", "level": "A2"},
+      {"day": 11, "theme": "Ta'lim, maktab, kollej va darslar", "level": "A2"},
+      {"day": 12, "theme": "Kasblar va kundalik faoliyat", "level": "A2-B1"},
+      {"day": 13, "theme": "Ish joyi, ofis va mehnat qurollari", "level": "B1"},
+      {"day": 14, "theme": "Biznes asoslari, savdo va sheriklik", "level": "B1"},
+      {"day": 15, "theme": "Pul, bank va moliyaviy amallar", "level": "B1"},
+      {"day": 16, "theme": "Shartnomalar, bitimlar va muzokaralar", "level": "B1"},
+      {"day": 17, "theme": "Boshqaruv, yetakchilik va jamoa", "level": "B1"},
+      {"day": 18, "theme": "Marketing, reklama va mijozlar", "level": "B1"},
+      {"day": 19, "theme": "Muvaffaqiyat, motivatsiya va rivojlanish", "level": "B1-B2"},
+      {"day": 20, "theme": "Rejalashtirish, vaqt va unumdorlik", "level": "B2"},
+      {"day": 21, "theme": "Axborot texnologiyalari va dasturlash", "level": "B2"},
+      {"day": 22, "theme": "Internet, kiberxavfsizlik va tarmoq", "level": "B2"},
+      {"day": 23, "theme": "Gadjetlar, qurilmalar va elektronika", "level": "B2"},
+      {"day": 24, "theme": "Sun'iy intellekt va innovatsiyalar", "level": "B2"},
+      {"day": 25, "theme": "Ilm-fan, tadqiqot va kashfiyotlar", "level": "B2"},
+      {"day": 26, "theme": "Tabiat, hayvonot olami va o'simliklar", "level": "B2"},
+      {"day": 27, "theme": "Ekologiya va atrof-muhit muhofazasi", "level": "B2"},
+      {"day": 28, "theme": "Kosmos, astronomiya va fizika", "level": "B2"},
+      {"day": 29, "theme": "Geografiya, iqlim va sayyoramiz", "level": "B2"},
+      {"day": 30, "theme": "Madaniyat, san'at va an'analar", "level": "B2"},
+      {"day": 31, "theme": "Musiqa, teatr, kino va tasviriy san'at", "level": "B2"},
+      {"day": 32, "theme": "Sport, sog'lom turmush va mashqlar", "level": "B2"},
+      {"day": 33, "theme": "Xalqaro turizm va mehmonxonalar", "level": "B2"},
+      {"day": 34, "theme": "OAV, jurnalistika va yangiliklar", "level": "B2"},
+      {"day": 35, "theme": "Qonun, adliya va inson huquqlari", "level": "B2-C1"},
+      {"day": 36, "theme": "Siyosat, davlat boshqaruvi va diplomatiya", "level": "C1"},
+      {"day": 37, "theme": "Tarix, sivilizatsiyalar va meros", "level": "C1"},
+      {"day": 38, "theme": "Falsafa, axloq va qadriyatlar", "level": "C1"},
+      {"day": 39, "theme": "Psixologiya va inson ongining ishlashi", "level": "C1"},
+      {"day": 40, "theme": "Jamiyat, sotsiologiya va demografiya", "level": "C1"},
+      {"day": 41, "theme": "Akademik ilmiy tahlil va metodologiya", "level": "C1"},
+      {"day": 42, "theme": "Statistika, ma'lumotlar va tendensiyalar", "level": "C1"},
+      {"day": 43, "theme": "Mantiq, dalillar va tahliliy xulosalar", "level": "C1"},
+      {"day": 44, "theme": "IELTS/TOEFL yuqori balli akademik sifatlar", "level": "C1"},
+      {"day": 45, "theme": "IELTS/TOEFL murakkab akademik fe'llar", "level": "C1"},
+      {"day": 46, "theme": "Ingliz tilidagi eng mashhur idiomatik iboralar", "level": "C1"},
+      {"day": 47, "theme": "Frazali fe'llar: Turn, Take, Look, Put", "level": "B2-C1"},
+      {"day": 48, "theme": "Frazali fe'llar: Get, Come, Go, Break", "level": "B2-C1"},
+      {"day": 49, "theme": "Rasmiy diplomatik va ishbilarmonlik tili", "level": "C1-C2"},
+      {"day": 50, "theme": "Oliy darajadagi C1/C2 so'z boyligi va yakun", "level": "C1-C2"}
+    ];
+
+    const day1_words_source = [
+      {"id": 1, "set": 1, "word": "Puddle", "pos": "ot", "phonetic": "/ˈpʌdl/", "uz": "ko'lmak (suv to'plami)", "key": "Padval", "story": "To'yga yangi oq kastyum kiyib, shoshilib padvalga tushayotganimda bo'ynimgacha chuqur ko'lmakka tushib ketdim!", "example": "Don't step into that muddy puddle.", "ex_uz": "U loyqa ko'lmakka qadam bosma."},
+      {"id": 2, "set": 1, "word": "Gaze", "pos": "fe'l", "phonetic": "/ɡeɪz/", "uz": "tikilib qaramoq (ko'z uzmay)", "key": "Gaz", "story": "Gaz plitasiga qo'ygan choynagim qaynayaptimi deb 20 daqiqa ko'zimni pirpiratmay tikilib qarab turdim.", "example": "He gazed at the night sky in wonder.", "ex_uz": "U hayrat bilan tungi osmonga tikilib qaradi."},
+      {"id": 3, "set": 1, "word": "Smell", "pos": "fe'l/ot", "phonetic": "/smel/", "uz": "hidlamoq, hid taratmoq", "key": "Smetana", "story": "Muzlatgichda 1 oydan beri yotgan shubhali smetananing qopqog'ini ochib hidlab ko'rdim-u, hushimdan ketay dedim!", "example": "The delicious soup smells amazing.", "ex_uz": "Mazali sho'rva ajoyib hid taratyapti."},
+      {"id": 4, "set": 1, "word": "Clever", "pos": "sifat", "phonetic": "/ˈklevər/", "uz": "aqlli, zukko, topqir", "key": "Klever (beda)", "story": "Bobomning klever (beda) yegan sigiri birdan inglizcha gapirib, matematikadan misol yechib, o'ta aqlli bo'lib ketdi!", "example": "She came up with a very clever idea.", "ex_uz": "U juda aqlli g'oya o'ylab topdi."},
+      {"id": 5, "set": 1, "word": "Huge", "pos": "sifat", "phonetic": "/hjuːdʒ/", "uz": "ulkan, bahaybat", "key": "Hujra", "story": "Kichkina hujramga kirsam, ichkarida karavotimda ulkan, bahaybat fil uxlab yotibdi!", "example": "They live in a huge mansion.", "ex_uz": "Ular ulkan qasrda yashaydilar."},
+      {"id": 6, "set": 1, "word": "Curious", "pos": "sifat", "phonetic": "/ˈkjʊəriəs/", "uz": "qiziquvchan, sinchkov", "key": "Kuryer", "story": "Kuryer olib kelgan qutidan g'alati tovush eshitilgach, butun mahalla 'ichida nima bor ekan?' deb qiziquvchan bo'lib yig'ildi.", "example": "Cats are naturally curious animals.", "ex_uz": "Mushuklar tabiatan juda qiziquvchan hayvonlardir."},
+      {"id": 7, "set": 1, "word": "Abandon", "pos": "fe'l", "phonetic": "/əˈbændən/", "uz": "tashlab ketmoq, tark etmoq", "key": "Abonent", "story": "Abonent to'lov qilmay, qarzga botganidan qo'rqqan odam telefonini sahro o'rtasida tashlab qochib ketdi!", "example": "Never abandon your biggest dreams.", "ex_uz": "Hech qachon eng katta orzularingizni tashlab ketmang."},
+      {"id": 8, "set": 1, "word": "Achieve", "pos": "fe'l", "phonetic": "/əˈtʃiːv/", "uz": "erishmoq, qo'lga kiritmoq", "key": "Ochiv (ochib)", "story": "Kitobni har kuni ochib, yangi so'zlarni yodlagan bola barcha orzu qilgan marralariga erishdi.", "example": "You can achieve anything with hard work.", "ex_uz": "Mehnat bilan har narsaga erishishingiz mumkin."},
+      {"id": 9, "set": 1, "word": "Improve", "pos": "fe'l", "phonetic": "/ɪmˈpruːv/", "uz": "yaxshilamoq, rivojlantirmoq", "key": "Imtihon Pro", "story": "Imtihonda 'Pro' darajaga chiqib ota-onamni xursand qilaman deb, har kuni inglizchamni yaxshiladim.", "example": "Listening to audio improves your speaking.", "ex_uz": "Audioni tinglash gapirishingizni yaxshilaydi."},
+      {"id": 10, "set": 1, "word": "Opportunity", "pos": "ot", "phonetic": "/ˌɒp.əˈtjuː.nə.ti/", "uz": "imkoniyat, qulay vaziyat", "key": "Opa chipta", "story": "Opam Amerikaga tekin samolyot chiptasi yutib olib, hayotidagi eng zo'r imkoniyatga ega bo'ldi!", "example": "Don't miss this unique opportunity.", "ex_uz": "Ushbu noyob imkoniyatni qo'ldan boy bermang."},
+      {"id": 11, "set": 1, "word": "Challenge", "pos": "ot/fe'l", "phonetic": "/ˈtʃæl.ɪndʒ/", "uz": "qiyin sinov, chaqiriq", "key": "Chellenj", "story": "Do'stlarim menga chellenj tashladi: '1 kunda 100 ta so'z yodlay olmaysan!' Men bu sinovni qabul qildim!", "example": "I love taking on a new challenge.", "ex_uz": "Men yangi qiyin sinovlarni yaxshi ko'raman."},
+      {"id": 12, "set": 1, "word": "Confidence", "pos": "ot", "phonetic": "/ˈkɒn.fɪ.dəns/", "uz": "o'ziga ishonch", "key": "Konfet", "story": "Sehrli konfetni yeb olgan uyatchan bola sahnaga sakrab chiqib, 1000 kishining oldida o'ziga qattiq ishonib nutq so'zladi.", "example": "Confidence comes from constant practice.", "ex_uz": "O'ziga ishonch doimiy amaliyotdan keladi."},
+      {"id": 13, "set": 1, "word": "Determine", "pos": "fe'l", "phonetic": "/dɪˈtɜː.mɪn/", "uz": "qat'iy qaror qilmoq", "key": "Detektiv", "story": "Qaysar detektiv tuni bilan uxlamay, nima bo'lsa ham jinoyatchini topishga qat'iy qaror qildi!", "example": "She was determined to succeed.", "ex_uz": "U muvaffaqiyat qozonishga qat'iy qaror qilgan edi."},
+      {"id": 14, "set": 1, "word": "Effort", "pos": "ot", "phonetic": "/ˈef.ət/", "uz": "harakat, urinish, mehnat", "key": "Efir", "story": "Jonli efirga chiqib kulgiga qolmaslik uchun kechasi bilan tinimsiz harakat va mehnat qildi.", "example": "Success requires tremendous effort.", "ex_uz": "Muvaffaqiyat ulkan harakatni talab qiladi."},
+      {"id": 15, "set": 1, "word": "Fluent", "pos": "sifat", "phonetic": "/ˈfluː.ənt/", "uz": "ravon, to'xtovsiz, biyron", "key": "Flyuger (shabboda)", "story": "Bahor shabbodasiday yengil va to'xtovsiz esib, ingliz tilida suvdek ravon gapirib ketdi!", "example": "He speaks fluent English.", "ex_uz": "U ravon ingliz tilida gapiradi."},
+      {"id": 16, "set": 1, "word": "Habit", "pos": "ot", "phonetic": "/ˈhæb.ɪt/", "uz": "odat, ko'nikma", "key": "Xobbi", "story": "Mening xobbim har kuni ertalab 100 ta so'z yodlaydigan foydali odatga aylanib ketdi.", "example": "Good habits lead to great results.", "ex_uz": "Yaxshi odatlar buyuk natijalarga olib keladi."},
+      {"id": 17, "set": 1, "word": "Inspire", "pos": "fe'l", "phonetic": "/ɪnˈspaɪər/", "uz": "ilhomlantirmoq, qanot bermoq", "key": "Spirala", "story": "Kosmosga olib chiquvchi sehrli spirala unga qanot berib, yangi kashfiyotlar qilishga ilhomlantirdi.", "example": "Her courage inspired everyone around her.", "ex_uz": "Uning jasorati atrofidagilarni ilhomlantirdi."},
+      {"id": 18, "set": 1, "word": "Knowledge", "pos": "ot", "phonetic": "/ˈnɒl.ɪdʒ/", "uz": "bilim, ilm", "key": "Nol idish", "story": "Boshi bo'sh (nol idish) odamga ilm quyilsa, u har qanday qiyinchilikni yengadigan bilim sohibiga aylanadi.", "example": "Knowledge is true power.", "ex_uz": "Bilim — haqiqiy kuchdir."},
+      {"id": 19, "set": 1, "word": "Memorize", "pos": "fe'l", "phonetic": "/ˈmem.ə.raɪz/", "uz": "yod olmoq, eslab qolmoq", "key": "Memoriya (fleshka)", "story": "Miyamga 1000 Gigabaytli memoriya fleshkasini tiqib, barcha so'zlarni bitta ko'rishda yodlab oldim!", "example": "Try to memorize words with mnemonics.", "ex_uz": "So'zlarni mnemonika bilan yod olishga harakat qiling."},
+      {"id": 20, "set": 1, "word": "Notice", "pos": "fe'l/ot", "phonetic": "/ˈnəʊ.tɪs/", "uz": "payqamoq, sezmoq", "key": "Notarius", "story": "Ko'zoynak taqqan qattiqqo'l notarius shartnomadagi qasddan yashirilgan kichik xatoni darhol payqab qoldi.", "example": "Did you notice his new haircut?", "ex_uz": "Uning yangi soch turmagini payqadingizmi?"},
+      {"id": 21, "set": 2, "word": "Analyze", "pos": "fe'l", "phonetic": "/ˈæn.əl.aɪz/", "uz": "tahlil qilmoq", "key": "Analiz", "story": "Qon analizini qo'liga olgan shifokor mikroskop orqali bakteriyalarni chuqur tahlil qildi.", "example": "We need to analyze the data carefully.", "ex_uz": "Biz ma'lumotlarni sinchiklab tahlil qilishimiz kerak."},
+      {"id": 22, "set": 2, "word": "Apply", "pos": "fe'l", "phonetic": "/əˈplaɪ/", "uz": "qo'llamoq, tatbiq etmoq", "key": "Apple (olma)", "story": "Daraxtdan uzilgan Apple olmasini yeb, Nyuton kashf qilgan qonunni darsda amalda qo'lladi.", "example": "Apply your knowledge in daily life.", "ex_uz": "Bilimingizni kundalik hayotda qo'llang."},
+      {"id": 23, "set": 2, "word": "Capable", "pos": "sifat", "phonetic": "/ˈkeɪ.pə.bəl/", "uz": "qodir, qo'lidan keladigan", "key": "Kepka", "story": "Sehrli qizil kepkani kiyib olgan bola har qanday qiyin ishni uddalashga qodir bo'lib qoldi!", "example": "You are capable of doing amazing things.", "ex_uz": "Siz ajoyib ishlarni qilishga qodirsiz."},
+      {"id": 24, "set": 2, "word": "Concentrate", "pos": "fe'l", "phonetic": "/ˈkɒn.sən.treɪt/", "uz": "diqqatni jamlamoq", "key": "Konsentratsiya", "story": "O'yin paytida do'stlari chaqirsa ham qaramay, bor diqqatini bitta vazifaga konsentratsiya qildi.", "example": "I can't concentrate with all this noise.", "ex_uz": "Bu shovqinda diqqatimni jamlay olmayapman."},
+      {"id": 25, "set": 2, "word": "Create", "pos": "fe'l", "phonetic": "/kriˈeɪt/", "uz": "yaratmoq, bino qilmoq", "key": "Kreativ", "story": "Kreativ rassom qog'ozga bo'yoq sepib, dunyodagi eng qimmat rasmni yaratdi.", "example": "Create your own vocabulary cards.", "ex_uz": "O'zingizning lug'at kartochkalaringizni yarating."},
+      {"id": 26, "set": 2, "word": "Daily", "pos": "sifat", "phonetic": "/ˈdeɪ.li/", "uz": "kunlik, har kungi", "key": "Dala", "story": "Har kuni dalaga chiqib toza havoda nafas olish - uning sevimli kunlik mashg'uloti.", "example": "Daily exercise keeps you healthy.", "ex_uz": "Kunlik mashq sizni sog'lom saqlaydi."},
+      {"id": 27, "set": 2, "word": "Efficient", "pos": "sifat", "phonetic": "/ɪˈfɪʃ.ənt/", "uz": "samarali, unumli", "key": "Effekt", "story": "Yangi o'rganish usuli shunday katta effekt berdiki, soatlab dars qilishdan ko'ra 10 barobar samarali bo'ldi.", "example": "Find an efficient way to study.", "ex_uz": "O'qishning samarali yo'lini toping."},
+      {"id": 28, "set": 2, "word": "Focus", "pos": "ot/fe'l", "phonetic": "/ˈfəʊ.kəs/", "uz": "diqqatni qaratmoq", "key": "Fokus (sirk)", "story": "Sirkdagi fokuschi hamma tomoshabinning ko'zini bitta shlyapaga fokus qildi.", "example": "Focus on 20 words at a time.", "ex_uz": "Bir vaqtda 20 ta so'zga diqqatingizni qarating."},
+      {"id": 29, "set": 2, "word": "Increase", "pos": "fe'l", "phonetic": "/ɪnˈkriːs/", "uz": "oshirmoq, ko'paytirmoq", "key": "Ikra", "story": "Qimmatbaho qora ikra yegan sportchining baquvvatligi va yugurish tezligi birdan keskin oshdi.", "example": "Reading will increase your vocabulary.", "ex_uz": "Kitob o'qish so'z boyligingizni oshiradi."},
+      {"id": 30, "set": 2, "word": "Manage", "pos": "fe'l", "phonetic": "/ˈmæn.ɪdʒ/", "uz": "boshqarmoq, uddalamoq", "key": "Menejer", "story": "Yosh menejer qiyin vaziyatda sarosimaga tushmasdan butun katta loyihani uddaburonlik bilan boshqardi.", "example": "She knows how to manage her time well.", "ex_uz": "U o'z vaqtini qanday yaxshi boshqarishni biladi."},
+      {"id": 31, "set": 2, "word": "Organize", "pos": "fe'l", "phonetic": "/ˈɔː.ɡən.aɪz/", "uz": "tartibga solmoq", "key": "Organizm", "story": "Inson organizmi kabi mukammal tartibda so'zlarni papkalarga ajratib tartibga soldi.", "example": "Organize your study desk neatly.", "ex_uz": "O'qish stolingizni tartibli qilib joylashtiring."},
+      {"id": 32, "set": 2, "word": "Perform", "pos": "fe'l", "phonetic": "/pəˈfɔːm/", "uz": "bajarmoq, namoyish etmoq", "key": "Platforma", "story": "Katta temir platforma ustiga chiqib, butun olam oldida o'zining eng qiyin tryukini ajoyib bajardi.", "example": "He performed exceptionally well in the exam.", "ex_uz": "U imtihonda o'zini juda yaxshi ko'rsatdi."},
+      {"id": 33, "set": 2, "word": "Productive", "pos": "sifat", "phonetic": "/prəˈdʌk.tɪv/", "uz": "unumli, mahsuldor", "key": "Mahsulot", "story": "Bir kunda butun bir omborni to'ldiradigan mahsulot tayyorlagan usta juda unumli ishladi.", "example": "I had a very productive morning.", "ex_uz": "Ertalab juda unumli ishladim."},
+      {"id": 34, "set": 2, "word": "Quickly", "pos": "ravish", "phonetic": "/ˈkwɪk.li/", "uz": "tezda, zudlik bilan", "key": "Kiyik", "story": "O'rmonda ovchidan qochgan kiyik chaqmoqdek tezlikda ko'zdan g'oyib bo'ldi.", "example": "Answer the quiz questions quickly.", "ex_uz": "Test savollariga tezda javob bering."},
+      {"id": 35, "set": 2, "word": "Recall", "pos": "fe'l", "phonetic": "/rɪˈkɔːl/", "uz": "eslamoq, xotiraga keltirmoq", "key": "Kol (qo'ng'iroq)", "story": "Telefon jiringlab 'kol' kelganda, o'tgan yili aytgan barcha va'dalarini bir zumda esladi.", "example": "Can you recall her name?", "ex_uz": "Uning ismini eslay olasizmi?"},
+      {"id": 36, "set": 2, "word": "Review", "pos": "fe'l", "phonetic": "/rɪˈvjuː/", "uz": "takrorlamoq, ko'zdan kechirmoq", "key": "Revizor", "story": "Kutilmaganda kelgan qattiqqo'l revizor butun buxgalteriya hujjatlarini qayta-qayta ko'zdan kechirdi.", "example": "Always review what you learned yesterday.", "ex_uz": "Kechagi o'rganganlaringizni doimo takrorlang."},
+      {"id": 37, "set": 2, "word": "Schedule", "pos": "ot/fe'l", "phonetic": "/ˈʃedʒ.uːl/", "uz": "jadval, reja", "key": "Shkaf + Gul", "story": "Katta shkafga osilgan chiroyli gul orqasiga yashirin kunlik dars jadvalini ilib qo'ydi.", "example": "Follow your daily study schedule.", "ex_uz": "Kunlik o'rganish jadvalingizga amal qiling."},
+      {"id": 38, "set": 2, "word": "Solve", "pos": "fe'l", "phonetic": "/sɒlv/", "uz": "yechmoq, hal qilmoq", "key": "Sovun", "story": "Miyani yaxshilab sovunlab yuvgandek tiniqlashtirib, eng chigal jumboqni bir daqiqada yechdi.", "example": "Together we can solve any problem.", "ex_uz": "Birgalikda har qanday muammoni hal qila olamiz."},
+      {"id": 39, "set": 2, "word": "Task", "pos": "ot", "phonetic": "/tɑːsk/", "uz": "vazifa, topshiriq", "key": "Toshka (tosh)", "story": "Og'irligi ulkan toshdek bosib yotgan qiyin topshiriqni sabr bilan oxiriga yetkazdi.", "example": "Complete each task step by step.", "ex_uz": "Har bir vazifani bosqichma-bosqich yakunlang."},
+      {"id": 40, "set": 2, "word": "Valuable", "pos": "sifat", "phonetic": "/ˈvæl.jə.bəl/", "uz": "qimmatli, qadrli", "key": "Valyuta", "story": "Sandqdagi tillo valyutadan ham ko'ra vaqt va sog'lik inson uchun eng qimmatli boylikdir.", "example": "Your time is extremely valuable.", "ex_uz": "Sizning vaqtingiz juda qimmatlidir."},
+      {"id": 41, "set": 3, "word": "Adapt", "pos": "fe'l", "phonetic": "/əˈdæpt/", "uz": "moslashmoq, ko'nikmoq", "key": "Adaptor", "story": "Universal adaptor xuddi har qanday rozetkaga moslashgani kabi inson ham har qanday muhitga moslashadi.", "example": "You must adapt to new situations.", "ex_uz": "Siz yangi vaziyatlarga moslashishingiz kerak."},
+      {"id": 42, "set": 3, "word": "Attitude", "pos": "ot", "phonetic": "/ˈæt.ɪ.tʃuːd/", "uz": "munosabat, kayfiyat", "key": "Artur", "story": "Artur ismli yigit yomg'ir yog'sa ham xursand bo'lib, hayotga doimo ijobiy munosabatda bo'ladi.", "example": "A positive attitude changes everything.", "ex_uz": "Ijobiy munosabat hamma narsani o'zgartiradi."},
+      {"id": 43, "set": 3, "word": "Behavior", "pos": "ot", "phonetic": "/bɪˈheɪ.vjər/", "uz": "xulq-atvor, odob", "key": "Baho", "story": "Maktab direktori uning odobli xulq-atvorini ko'rib, jurnaldagi barcha fanlariga a'lo baho qo'ydi.", "example": "Good behavior wins people's hearts.", "ex_uz": "Yaxshi xulq-atvor odamlarning qalbini zabt etadi."},
+      {"id": 44, "set": 3, "word": "Decision", "pos": "ot", "phonetic": "/dɪˈsɪʒ.ən/", "uz": "qaror, to'xtam", "key": "Desant", "story": "Baland samolyot eshigida turgan botir desantchi bir soniyada pastga sakrashga qat'iy qaror qildi.", "example": "It was the best decision of my life.", "ex_uz": "Bu hayotimdagi eng yaxshi qaror edi."},
+      {"id": 45, "set": 3, "word": "Emotion", "pos": "ot", "phonetic": "/ɪˈməʊ.ʃən/", "uz": "hissiyot, kechinma", "key": "Emotsiya", "story": "O'zbekiston chempion bo'lganida yurakdan toshib chiqqan quvonch emotsiyasi ko'zdan yosh oqizdi.", "example": "Music expresses deep emotion.", "ex_uz": "Musiqa chuqur hissiyotlarni ifodalaydi."},
+      {"id": 46, "set": 3, "word": "Experience", "pos": "ot/fe'l", "phonetic": "/ɪkˈspɪə.ri.əns/", "uz": "tajriba", "key": "Ekspert", "story": "Ko'p xatolardan to'g'ri xulosa chiqargan kishi oxir-oqibat katta tajribaga ega ekspertga aylanadi.", "example": "Experience is the best teacher.", "ex_uz": "Tajriba — eng yaxshi ustozdir."},
+      {"id": 47, "set": 3, "word": "Generous", "pos": "sifat", "phonetic": "/ˈdʒen.ər.əs/", "uz": "saxiy, ochiqko'ngil", "key": "General", "story": "Juda saxiy general o'zining barcha mukofot pullarini yetimlarga tarqatib yubordi.", "example": "He is generous with his time and help.", "ex_uz": "U o'z vaqti va yordamida juda saxiydir."},
+      {"id": 48, "set": 3, "word": "Honest", "pos": "sifat", "phonetic": "/ˈɒn.ɪst/", "uz": "halol, to'g'riso'z", "key": "Xonadon", "story": "Bu xonadonda topilgan bir tiyin begona pul ham darhol egasiga qaytariladi, chunki ular halol odamlar.", "example": "Always be honest with yourself.", "ex_uz": "O'zingizga doimo to'g'riso'z bo'ling."},
+      {"id": 49, "set": 3, "word": "Influence", "pos": "fe'l/ot", "phonetic": "/ˈɪn.flu.əns/", "uz": "ta'sir qilmoq", "key": "Flyuger", "story": "Kuchli dovul flyugerni aylantirib yuborgani kabi, yaxshi kitoblar ham inson fikriga kuchli ta'sir qiladi.", "example": "Books have a huge influence on our minds.", "ex_uz": "Kitoblar bizning ongimizga katta ta'sir qiladi."},
+      {"id": 50, "set": 3, "word": "Judge", "pos": "fe'l/ot", "phonetic": "/dʒʌdʒ/", "uz": "baholamoq; sudya", "key": "Jazo", "story": "Adolatli sudya aybdorga jazo bermasdan oldin, barcha dalillarni xolisona baholadi.", "example": "Don't judge a book by its cover.", "ex_uz": "Kitobni muqovasiga qarab baholama."},
+      {"id": 51, "set": 3, "word": "Listen", "pos": "fe'l", "phonetic": "/ˈlɪs.ən/", "uz": "tinglamoq, quloq solmoq", "key": "List (qog'oz)", "story": "Qog'oz varag'ini (listini) qo'liga olib, ustozining har bir so'zini diqqat bilan tinglab yozib bordi.", "example": "Listen carefully to the English audio.", "ex_uz": "Inglizcha audioni diqqat bilan tinglang."},
+      {"id": 52, "set": 3, "word": "Motivation", "pos": "ot", "phonetic": "/ˌməʊ.tɪˈveɪ.ʃən/", "uz": "rag'bat, turtki", "key": "Motor", "story": "Ichkaridan yonib turgan motor mashinani oldinga surgani kabi, kuchli motivatsiya insonni harakatga keltiradi.", "example": "Daily progress provides motivation.", "ex_uz": "Kunlik o'sish insonni rag'batlantiradi."},
+      {"id": 53, "set": 3, "word": "Opinion", "pos": "ot", "phonetic": "/əˈpɪn.jən/", "uz": "fikr, qarash", "key": "Opium", "story": "Boshqalarning qulog'iga opium kabi zahar quyadigan g'iybatlarga quloq solmay, o'z mustaqil fikringda qol.", "example": "In my opinion, practice is key.", "ex_uz": "Mening fikrimcha, amaliyot asosiy omildir."},
+      {"id": 54, "set": 3, "word": "Patient", "pos": "sifat", "phonetic": "/ˈpeɪ.ʃənt/", "uz": "sabrli, toqatli", "key": "Patsiyent", "story": "Tish shifokorining oldida navbat kutayotgan patsiyent og'riqqa qaramay juda sabrli o'tirdi.", "example": "Learning a language requires being patient.", "ex_uz": "Til o'rganish sabrli bo'lishni talab qiladi."},
+      {"id": 55, "set": 3, "word": "Polite", "pos": "sifat", "phonetic": "/pəˈlaɪt/", "uz": "xushmuomala, odobli", "key": "Politexnik", "story": "Politexnik universitetining barcha talabalari salom berib, eshikni ochib beradigan xushmuomala yoshlar ekan.", "example": "It pays to be polite to everyone.", "ex_uz": "Hammaga xushmuomala bo'lish faqat foyda keltiradi."},
+      {"id": 56, "set": 3, "word": "Reaction", "pos": "ot", "phonetic": "/riˈæk.ʃən/", "uz": "munosabat, reaksiya", "key": "Reaksiya (kimyo)", "story": "Probirkadagi kimyoviy reaksiya portlab ketganda, laboratoriyadagilarning reaksiyasini ko'rish kerak edi!", "example": "His reaction was full of joy.", "ex_uz": "Uning reaksiyasi quvonchga to'la edi."},
+      {"id": 57, "set": 3, "word": "Respect", "pos": "fe'l/ot", "phonetic": "/rɪˈspekt/", "uz": "hurmat qilmoq", "key": "Respekt", "story": "Katta yutuqqa erishgan qahramonga butun shahar aholisi bosh egib, 'Respekt!' deb hurmat bildirdi.", "example": "Respect others and they will respect you.", "ex_uz": "Boshqalarni hurmat qiling, shunda ular ham sizni hurmat qiladi."},
+      {"id": 58, "set": 3, "word": "Support", "pos": "fe'l/ot", "phonetic": "/səˈpɔːt/", "uz": "qo'llab-quvvatlamoq", "key": "Sport", "story": "O'zbek bokschisi ringga chiqqanda, butun stadion 'Olg'a!' deb uni chin dildan qo'llab-quvvatladi.", "example": "Friends always support each other.", "ex_uz": "Do'stlar doimo bir-birini qo'llab-quvvatlaydilar."},
+      {"id": 59, "set": 3, "word": "Trust", "pos": "fe'l/ot", "phonetic": "/trʌst/", "uz": "ishonmoq; ishonch", "key": "Trast", "story": "Ko'zingizni yumib, orqaga qarab yiqilsangiz, sizni ushlab qoladigan vafodor do'stingizga ishonishingiz mumkin.", "example": "Trust the process and keep studying.", "ex_uz": "Jarayonga ishoning va o'qishda davom eting."},
+      {"id": 60, "set": 3, "word": "Understand", "pos": "fe'l", "phonetic": "/ˌʌn.dəˈstænd/", "uz": "tushunmoq, anglamoq", "key": "Usta", "story": "Tajribali usta murakkab chizmaga bir marta ko'z tashlab, dvigatelning qayeri buzilganini darhol tushundi.", "example": "Do you understand this sentence?", "ex_uz": "Bu gapni tushundingizmi?"},
+      {"id": 61, "set": 4, "word": "Advantage", "pos": "ot", "phonetic": "/ədˈvɑːn.tɪdʒ/", "uz": "afzallik, ustunlik", "key": "Avans", "story": "Boshqalardan oldin avans olgan usta yangi asboblar sotib olib, katta ustunlikka ega bo'ldi.", "example": "Speaking English gives you a huge advantage.", "ex_uz": "Ingliz tilini bilish sizga ulkan ustunlik beradi."},
+      {"id": 62, "set": 4, "word": "Benefit", "pos": "ot", "phonetic": "/ˈben.ɪ.fɪt/", "uz": "foyda, naf", "key": "Befoyda emas", "story": "Ertalab yugurish aslo befoyda emas, uning sog'likka keltiradigan nafi bebahodir.", "example": "Regular sleep has countless benefits.", "ex_uz": "Muntazam uyquning son-sanoqsiz foydasi bor."},
+      {"id": 63, "set": 4, "word": "Career", "pos": "ot", "phonetic": "/kəˈrɪər/", "uz": "martaba, karyera", "key": "Karyera", "story": "Kichik shogirdlikdan boshlab, o'z kasbining eng cho'qqisiga chiqib, ajoyib karyera qildi.", "example": "Build a successful international career.", "ex_uz": "Muvaffaqiyatli xalqaro martaba quring."},
+      {"id": 64, "set": 4, "word": "Demand", "pos": "ot/fe'l", "phonetic": "/dɪˈmɑːnd/", "uz": "talab; talab qilmoq", "key": "Damas", "story": "Viloyatlar o'rtasida yo'lovchi tashishda oq Damas mashinalariga har kuni katta talab bor.", "example": "English teachers are in high demand.", "ex_uz": "Ingliz tili o'qituvchilariga talab juda yuqori."},
+      {"id": 65, "set": 4, "word": "Employ", "pos": "fe'l", "phonetic": "/ɪmˈplɔɪ/", "uz": "ishga olmoq, yollamoq", "key": "Amal", "story": "Katta zavod rahbari o'z sohasini sevadigan yuzlab yosh mutaxassislarni ishga oldi.", "example": "The company plans to employ more staff.", "ex_uz": "Kompaniya ko'proq xodimlarni ishga olishni rejalashtirmoqda."},
+      {"id": 66, "set": 4, "word": "Financial", "pos": "sifat", "phonetic": "/faɪˈnæn.ʃəl/", "uz": "moliyaviy", "key": "Finans", "story": "Finans hisob-kitoblarini daftarga aniq yozib borish insonni moliyaviy qiyinchilikdan asraydi.", "example": "Achieve your financial freedom.", "ex_uz": "O'z moliyaviy erkinligingizga erishing."},
+      {"id": 67, "set": 4, "word": "Goal", "pos": "ot", "phonetic": "/ɡəʊl/", "uz": "maqsad, marra", "key": "Gol", "story": "Futbolchi 90-daqiqada darvozaga ajoyib gol urib, jamoasini chempionlik maqsadiga yetkazdi!", "example": "Set a clear goal for each week.", "ex_uz": "Har bir hafta uchun aniq maqsad qo'ying."},
+      {"id": 68, "set": 4, "word": "Income", "pos": "ot", "phonetic": "/ˈɪn.kʌm/", "uz": "daromad, tushum", "key": "Inson kuchi", "story": "Inson o'z mehnati bilan bilimini sotsa, uning oylik daromadi bir necha barobar oshadi.", "example": "Increase your monthly income with new skills.", "ex_uz": "Yangi ko'nikmalar bilan oylik daromadingizni oshiring."},
+      {"id": 69, "set": 4, "word": "Job", "pos": "ot", "phonetic": "/dʒɒb/", "uz": "ish, vazifa", "key": "Jom (kosa)", "story": "O'z ishini mukammal biladigan usta jom kosalarni zardan yasab, hammadan maqtov oldi.", "example": "You did a fantastic job!", "ex_uz": "Siz ajoyib ish qildingiz!"},
+      {"id": 70, "set": 4, "word": "Leadership", "pos": "ot", "phonetic": "/ˈliː.də.ʃɪp/", "uz": "yetakchilik, liderlik", "key": "Lider", "story": "Haqiqiy lider boshqalarga buyruq bermaydi, balki o'zi oldinda yurib, yetakchilik namunasi bo'ladi.", "example": "Strong leadership unites the entire team.", "ex_uz": "Kuchli yetakchilik butun jamoani birlashtiradi."},
+      {"id": 71, "set": 4, "word": "Market", "pos": "ot", "phonetic": "/ˈmɑː.kɪt/", "uz": "bozor", "key": "Market", "story": "Biznesmen o'z mahsulotini xalqaro elektron marketga qo'yib, butun dunyoga sota boshladi.", "example": "The global market is changing rapidly.", "ex_uz": "Global bozor juda tez o'zgarmoqda."},
+      {"id": 72, "set": 4, "word": "Negotiate", "pos": "fe'l", "phonetic": "/nəˈɡəʊ.ʃi.eɪt/", "uz": "muzokara olib bormoq", "key": "Nega kech", "story": "Hamkorlar stolda o'tirib 'Nega narxni tushirmaysiz?' deb 5 soat tinmay muzokara olib bordilar.", "example": "Learn how to negotiate successfully.", "ex_uz": "Muvaffaqiyatli muzokara olib borishni o'rganing."},
+      {"id": 73, "set": 4, "word": "Professional", "pos": "sifat", "phonetic": "/prəˈfeʃ.ən.əl/", "uz": "professional, mohir", "key": "Profi", "story": "Har qanday vaziyatda o'zini bosiq tutib, ishni xatosiz bajaradigan odam - haqiqiy professionaldir.", "example": "Always act like a true professional.", "ex_uz": "Doimo haqiqiy professionaldek harakat qiling."},
+      {"id": 74, "set": 4, "word": "Quality", "pos": "ot", "phonetic": "/ˈkwɒl.ə.ti/", "uz": "sifat, yuqori saviya", "key": "Kvalifikatsiya", "story": "Kvalifikatsiyasi yuqori usta tikkan etiklar 10 yil kiysa ham yirtilmaydigan a'lo sifatda bo'ldi.", "example": "Quality matters much more than quantity.", "ex_uz": "Sifat miqdordan ancha muhimroqdir."},
+      {"id": 75, "set": 4, "word": "Resource", "pos": "ot", "phonetic": "/rɪˈzɔːs/", "uz": "resurs, boylik manbai", "key": "Resurs", "story": "O'zbekistonning zaminidagi qimmatbaho tabiiy resurslar xalqimizning ulkan boyligidir.", "example": "Use every learning resource available.", "ex_uz": "Mavjud barcha o'rganish manbalaridan foydalaning."},
+      {"id": 76, "set": 4, "word": "Strategy", "pos": "ot", "phonetic": "/ˈstræt.ə.dʒi/", "uz": "strategiya, reja", "key": "Strategiya", "story": "Shaxmat ustasi raqibini 3 yurishda mot qilish uchun g'olibona strategiya tuzdi.", "example": "A good learning strategy saves time.", "ex_uz": "Yaxshi o'rganish strategiyasi vaqtni tejaydi."},
+      {"id": 77, "set": 4, "word": "Training", "pos": "ot", "phonetic": "/ˈtreɪ.nɪŋ/", "uz": "mashg'ulot, mashq", "key": "Trening", "story": "Olimpiada chempioni har kuni 6 soat qattiq jismoniy va aqliy mashg'ulot olib bordi.", "example": "Daily memory training improves focus.", "ex_uz": "Kunlik xotira mashg'uloti diqqatni oshiradi."},
+      {"id": 78, "set": 4, "word": "Upgrade", "pos": "fe'l", "phonetic": "/ʌpˈɡreɪd/", "uz": "darajasini oshirmoq", "key": "Apgrad", "story": "Eski sekin ishlayotgan kompyuteriga tezkor xotira o'rnatib, uning quvvatini bir necha barobar oshirdi.", "example": "Upgrade your English vocabulary today.", "ex_uz": "Bugun ingliz tili so'z boyligingizni oshiring."},
+      {"id": 79, "set": 4, "word": "Wealth", "pos": "ot", "phonetic": "/welθ/", "uz": "boylik, farovonlik", "key": "Vali boy", "story": "Vali boy butun boyligini yo'qotganda ham 'Miyamdagi bilimlarim eng katta boyligimdir!' deb xursand yurdi.", "example": "True wealth is a peaceful mind.", "ex_uz": "Haqiqiy boylik — xotirjam qalbdir."},
+      {"id": 80, "set": 4, "word": "Expert", "pos": "ot/sifat", "phonetic": "/ˈek.spɜːt/", "uz": "mutaxassis, usta", "key": "Ekspert", "story": "Televizorda murakkab savollarga suvday ravon javob bergan mutaxassis haqiqiy ekspert deb topildi.", "example": "Practice makes you an expert.", "ex_uz": "Amaliyot sizni mutaxassisga aylantiradi."},
+      {"id": 81, "set": 5, "word": "Access", "pos": "ot/fe'l", "phonetic": "/ˈæk.ses/", "uz": "kirish imkoniyati", "key": "Aksiya", "story": "Katta aksiyada yutib chiqqan talabaga dunyoning barcha maxfiy elektron kutubxonalariga bepul kirish imkoni berildi.", "example": "Get instant access to thousands of books.", "ex_uz": "Minglab kitoblarga bir zumda kirish imkoniga ega bo'ling."},
+      {"id": 82, "set": 5, "word": "Artificial", "pos": "sifat", "phonetic": "/ˌɑː.tɪˈfɪʃ.əl/", "uz": "sun'iy", "key": "Art (san'at)", "story": "Rassom art ko'rgazmasida tirikdek harakatlanadigan sun'iy robot-qushni namoyish qildi.", "example": "Artificial Intelligence is transforming our world.", "ex_uz": "Sun'iy intellekt dunyomizni o'zgartirmoqda."},
+      {"id": 83, "set": 5, "word": "Connect", "pos": "fe'l", "phonetic": "/kəˈnekt/", "uz": "bog'lamoq, ulamoq", "key": "Konnektor", "story": "Uzilib qolgan simlarni konnektor orqali bir-biriga ulab, butun uyni yorug'likka to'ldirdi.", "example": "English helps you connect with the world.", "ex_uz": "Ingliz tili sizni dunyo bilan bog'laydi."},
+      {"id": 84, "set": 5, "word": "Device", "pos": "ot", "phonetic": "/dɪˈvaɪs/", "uz": "qurilma, apparat", "key": "Devays", "story": "Cho'ntakka sig'adigan bu kichkina mo''jizaviy devays bir vaqtning o'zida telefon, soat va kompyuter vazifasini bajaradi.", "example": "Keep your mobile device charged.", "ex_uz": "Mobil qurilmangizni quvvatlab turing."},
+      {"id": 85, "set": 5, "word": "Digital", "pos": "sifat", "phonetic": "/ˈdɪdʒ.ɪ.təl/", "uz": "raqamli", "key": "Dvigatel", "story": "Eski qog'oz daftarlarni tashlab, barcha ma'lumotlarni raqamli kompyuter tizimiga o'tkazdi.", "example": "We are living in a digital age.", "ex_uz": "Biz raqamli asrda yashamoqdamiz."},
+      {"id": 86, "set": 5, "word": "Discover", "pos": "fe'l", "phonetic": "/dɪˈskʌv.ər/", "uz": "kashf etmoq, topmoq", "key": "Diskoteka", "story": "Diskotekada raqsga tushayotgan qiz yerda yotgan qadimiy oltin uzukni tasodifan kashf etib qoldi.", "example": "Discover the joy of learning.", "ex_uz": "O'rganish zavqini kashf eting."},
+      {"id": 87, "set": 5, "word": "Environment", "pos": "ot", "phonetic": "/ɪnˈvaɪ.rən.mənt/", "uz": "atrof-muhit, tabiat", "key": "Envoy", "story": "O'rmonlarni asrash va atrof-muhitni toza saqlash uchun millionlab daraxt ko'chatlari ekildi.", "example": "Protecting the environment is essential.", "ex_uz": "Atrof-muhitni muhofaza qilish juda muhimdir."},
+      {"id": 88, "set": 5, "word": "Global", "pos": "sifat", "phonetic": "/ˈɡləʊ.bəl/", "uz": "umumjahon, global", "key": "Globus", "story": "Stol ustidagi aylanuvchi globusdagi barcha davlatlar bitta global iqtisodiy tarmoqqa ulangan.", "example": "English is a truly global language.", "ex_uz": "Ingliz tili haqiqiy umumjahon tilidir."},
+      {"id": 89, "set": 5, "word": "Impact", "pos": "ot/fe'l", "phonetic": "/ˈɪm.pækt/", "uz": "kuchli ta'sir", "key": "Kompakt", "story": "Osmondan tushgan kichkina kompakt meteorit butun yer yuziga ulkan portlash ta'sirini ko'rsatdi.", "example": "Your habits have a direct impact on your future.", "ex_uz": "Odatlaringiz kelajagingizga to'g'ridan-to'g'ri ta'sir ko'rsatadi."},
+      {"id": 90, "set": 5, "word": "Innovate", "pos": "fe'l", "phonetic": "/ˈɪn.ə.veɪt/", "uz": "yangilik yaratmoq", "key": "Innovatsiya", "story": "O'rganishni o'yinga aylantirib, ta'lim sohasida ajoyib yangilik yaratdi.", "example": "Companies must innovate to survive.", "ex_uz": "Kompaniyalar yashab qolish uchun yangilik yaratishi kerak."},
+      {"id": 91, "set": 5, "word": "Modern", "pos": "sifat", "phonetic": "/ˈmɒd.ən/", "uz": "zamonaviy, yangi", "key": "Modern", "story": "Shisha va po'latdan qurilgan zamonaviy osmono'par bino shaharning eng ko'rkam joyiga aylandi.", "example": "Modern web tools make memorizing easy.", "ex_uz": "Zamonaviy veb-vositalar yodlashni osonlashtiradi."},
+      {"id": 92, "set": 5, "word": "Network", "pos": "ot", "phonetic": "/ˈnet.wɜːk/", "uz": "tarmoq, aloqalar", "key": "Net (to'r)", "story": "O'rgimchak to'riday butun dunyoni qamrab olgan internet tarmog'i odamlarni bir zumda bog'laydi.", "example": "Build a strong professional network.", "ex_uz": "Kuchli professional aloqalar tarmog'ini quring."},
+      {"id": 93, "set": 5, "word": "Online", "pos": "sifat", "phonetic": "/ˌɒnˈlaɪn/", "uz": "onlayn, internetda", "key": "Onlayn", "story": "Uyda issiq choy ichib o'tirib, onlayn tarzda dunyo professorlaridan dars oldi.", "example": "You can practice English online anytime.", "ex_uz": "Istalgan vaqtda onlayn ingliz tilini mashq qilishingiz mumkin."},
+      {"id": 94, "set": 5, "word": "Protect", "pos": "fe'l", "phonetic": "/prəˈtekt/", "uz": "himoya qilmoq, asramoq", "key": "Prorektor", "story": "Universitet prorektori iqtidorli talabalarni har qanday nohaqlikdan o'z qalqoniday himoya qildi.", "example": "Always protect your personal passwords.", "ex_uz": "Shaxsiy parollaringizni doimo himoya qiling."},
+      {"id": 95, "set": 5, "word": "Rapid", "pos": "sifat", "phonetic": "/ˈræp.ɪd/", "uz": "jadal, o'ta tez", "key": "Rap (tez qo'shiq)", "story": "Tezkor rap aytgan qo'shiqchining so'zlaridek, uning bilimi o'ta jadal sur'atda o'sib ketdi.", "example": "We have seen rapid progress this month.", "ex_uz": "Bu oyda biz jadal o'sishni ko'rdik."},
+      {"id": 96, "set": 5, "word": "Search", "pos": "fe'l", "phonetic": "/sɜːtʃ/", "uz": "qidirmoq, izlamoq", "key": "Serjant", "story": "Kuchuk yetaklagan sinchkov serjant qorong'i o'rmondan yo'qolgan sayyohni kechasi bilan qidirdi.", "example": "Search for new words in the dictionary.", "ex_uz": "Lug'atdan yangi so'zlarni qidiring."},
+      {"id": 97, "set": 5, "word": "Technology", "pos": "ot", "phonetic": "/tekˈnɒl.ə.dʒi/", "uz": "texnologiya", "key": "Texnika", "story": "Sehrli texnika yordamida inson xohlagan tilida bir zumda gapira oladigan davr keldi.", "example": "Technology makes language learning accessible.", "ex_uz": "Texnologiya til o'rganishni hamma uchun qulay qiladi."},
+      {"id": 98, "set": 5, "word": "Unique", "pos": "sifat", "phonetic": "/juːˈniːk/", "uz": "noyob, tengsiz", "key": "Unikal", "story": "Dunyoda hech qayerda uchramaydigan unikal qora olmos muzeyning eng qimmat durdonasiga aylandi.", "example": "Each person has a unique learning pace.", "ex_uz": "Har bir insonning o'ziga xos noyob o'rganish sur'ati bor."},
+      {"id": 99, "set": 5, "word": "Virtual", "pos": "sifat", "phonetic": "/ˈvɜː.tʃu.əl/", "uz": "virtual, elektron", "key": "Virtual", "story": "Virtual ko'zoynakni taqqan bola Londonda yurganidek haqiqiy his qilib, inglizcha gaplashdi.", "example": "Join a virtual speaking club.", "ex_uz": "Virtual so'zlashuv klubiga qo'shiling."},
+      {"id": 100, "set": 5, "word": "Worldwide", "pos": "sifat/ravish", "phonetic": "/ˌwɜːldˈwaɪd/", "uz": "butun dunyo bo'ylab", "key": "World (dunyo)", "story": "U yaratgan veb-sayt butun dunyo bo'ylab millionlab odamlarning sevimli dasturiga aylandi!", "example": "English is spoken worldwide.", "ex_uz": "Ingliz tili butun dunyo bo'ylab gapiriladi."}
+    ];
+
+    let currentDay = parseInt(localStorage.getItem('lingo_day') || '1');
+    let currentChunk = 'all';
+    let currentMode = 'flashcard';
+    let currentIndex = 0;
+
+    let dayDataStore = JSON.parse(localStorage.getItem('lingo_days_data') || '{}');
+    if (!dayDataStore[1]) {
+      dayDataStore[1] = day1_words_source;
+    }
+
+    let masteredDict = JSON.parse(localStorage.getItem('lingo_mastered') || '{}');
+    let reviewDict = JSON.parse(localStorage.getItem('lingo_review') || '{}');
+    let streakCount = parseInt(localStorage.getItem('lingo_streak') || '1');
+
+    function speak(text) {
+      if ('speechSynthesis' in window) {
+        window.speechSynthesis.cancel();
+        const u = new SpeechSynthesisUtterance(text);
+        u.lang = 'en-US';
+        u.rate = parseFloat(document.getElementById('speech-rate').value || '0.9');
+        window.speechSynthesis.speak(u);
+      }
+    }
+
+    function getDayWords(dayNum) {
+      if (dayDataStore[dayNum] && dayDataStore[dayNum].length > 0) {
+        return dayDataStore[dayNum];
+      }
+      return day1_words_source;
+    }
+
+    function getActiveWords() {
+      const full = getDayWords(currentDay);
+      if (currentChunk === 'all') return full;
+      return full.filter(w => w.set === parseInt(currentChunk));
+    }
+
+    function renderCalendar() {
+      const grid = document.getElementById('calendar-grid');
+      grid.innerHTML = '';
+      for (let d = 1; d <= 50; d++) {
+        const pill = document.createElement('div');
+        pill.className = 'day-pill ' + (d === currentDay ? 'active' : '');
+        const dayMastered = (masteredDict[d] || []).length;
+        if (dayMastered >= 100) pill.classList.add('completed');
+        pill.innerHTML = '<span>Kun ' + d + '</span><span style="font-size: 10px; opacity: 0.8;">' + dayMastered + '/100</span>';
+        pill.onclick = () => {
+          currentDay = d;
+          localStorage.setItem('lingo_day', d.toString());
+          currentIndex = 0;
+          renderCalendar();
+          updateDayUI();
+        };
+        grid.appendChild(pill);
+      }
+    }
+
+    function updateDayUI() {
+      const t = dayThemesList[currentDay - 1] || {theme: 'Lug`at o`rganish', level: 'A1'};
+      document.getElementById('selected-day-label').textContent = 'Tanlangan: ' + currentDay + '-kun';
+      document.getElementById('day-title-text').textContent = currentDay + '-kun: ' + t.theme + ' (' + t.level + ')';
+
+      const masteredToday = (masteredDict[currentDay] || []).length;
+      const reviewToday = (reviewDict[currentDay] || []).length;
+      const totalToday = getDayWords(currentDay).length;
+      const percent = Math.min(100, Math.round((masteredToday / totalToday) * 100));
+
+      document.getElementById('goal-counter').textContent = masteredToday + ' / ' + totalToday;
+      document.getElementById('goal-percent').textContent = percent;
+      document.getElementById('daily-progress').style.width = percent + '%';
+      document.getElementById('mastered-count').textContent = masteredToday;
+      document.getElementById('review-count').textContent = reviewToday;
+      document.getElementById('remaining-count').textContent = Math.max(0, totalToday - masteredToday);
+      document.getElementById('streak-days').textContent = streakCount;
+
+      document.getElementById('day-learned-count').textContent = masteredToday;
+      document.getElementById('day-remain-count').textContent = Math.max(0, totalToday - masteredToday);
+
+      if (masteredToday === totalToday && totalToday > 0) launchConfetti();
+
+      renderFlashcard();
+      if (currentMode === 'listening') loadListeningQuestion();
+      if (currentMode === 'quiz') loadQuizQuestion();
+      if (currentMode === 'reverse') loadReverseQuestion();
+      if (currentMode === 'typing') loadTypingQuestion();
+      if (currentMode === 'table') renderTable();
+    }
+
+    function renderFlashcard() {
+      const words = getActiveWords();
+      if (words.length === 0) return;
+      const w = words[currentIndex % words.length];
+
+      const card = document.getElementById('main-card');
+      card.classList.remove('flipped');
+
+      document.getElementById('fc-pos').textContent = (w.pos || 'SO`Z').toUpperCase();
+      document.getElementById('fc-index').textContent = ((currentIndex % words.length) + 1) + ' / ' + words.length;
+      document.getElementById('fc-word').textContent = w.word;
+      document.getElementById('fc-phonetic').textContent = w.phonetic;
+      document.getElementById('fc-key').textContent = w.key || w.word;
+
+      document.getElementById('fc-uz').textContent = w.uz;
+      document.getElementById('fc-story').textContent = w.story || '';
+      document.getElementById('fc-example').textContent = w.example || '';
+      document.getElementById('fc-example-uz').textContent = w.ex_uz || '';
+
+      if (document.getElementById('auto-speak-toggle').checked) {
+        speak(w.word);
+      }
+    }
+
+    const mainCard = document.getElementById('main-card');
+    mainCard.onclick = (e) => {
+      if (e.target.closest('.audio-btn-round')) return;
+      mainCard.classList.toggle('flipped');
+    };
+
+    document.getElementById('fc-audio-front').onclick = (e) => {
+      e.stopPropagation();
+      const words = getActiveWords();
+      speak(words[currentIndex % words.length].word);
+    };
+
+    document.getElementById('fc-audio-back').onclick = (e) => {
+      e.stopPropagation();
+      const words = getActiveWords();
+      speak(words[currentIndex % words.length].example);
+    };
+
+    document.getElementById('btn-prev').onclick = () => {
+      const words = getActiveWords();
+      currentIndex = (currentIndex - 1 + words.length) % words.length;
+      renderFlashcard();
+    };
+
+    document.getElementById('btn-next').onclick = () => {
+      const words = getActiveWords();
+      currentIndex = (currentIndex + 1) % words.length;
+      renderFlashcard();
+    };
+
+    document.getElementById('btn-master').onclick = () => {
+      const words = getActiveWords();
+      const w = words[currentIndex % words.length];
+      if (!masteredDict[currentDay]) masteredDict[currentDay] = [];
+      if (!masteredDict[currentDay].includes(w.id)) masteredDict[currentDay].push(w.id);
+
+      localStorage.setItem('lingo_mastered', JSON.stringify(masteredDict));
+      document.getElementById('btn-next').click();
+      updateDayUI();
+      renderCalendar();
+    };
+
+    document.getElementById('btn-repeat').onclick = () => {
+      const words = getActiveWords();
+      const w = words[currentIndex % words.length];
+      if (!reviewDict[currentDay]) reviewDict[currentDay] = [];
+      if (!reviewDict[currentDay].includes(w.id)) reviewDict[currentDay].push(w.id);
+
+      if (masteredDict[currentDay]) {
+        masteredDict[currentDay] = masteredDict[currentDay].filter(x => x !== w.id);
+      }
+      localStorage.setItem('lingo_mastered', JSON.stringify(masteredDict));
+      localStorage.setItem('lingo_review', JSON.stringify(reviewDict));
+      document.getElementById('btn-next').click();
+      updateDayUI();
+      renderCalendar();
+    };
+
+    document.addEventListener('keydown', (e) => {
+      if (currentMode !== 'flashcard') return;
+      if (e.code === 'Space') { e.preventDefault(); mainCard.classList.toggle('flipped'); }
+      else if (e.code === 'ArrowRight') document.getElementById('btn-next').click();
+      else if (e.code === 'ArrowLeft') document.getElementById('btn-prev').click();
+      else if (e.key === '1') document.getElementById('btn-repeat').click();
+      else if (e.key === '2') document.getElementById('btn-master').click();
+    });
+
+    document.querySelectorAll('.chunk-btn').forEach(btn => {
+      btn.onclick = () => {
+        document.querySelectorAll('.chunk-btn').forEach(b => b.classList.remove('active'));
+        btn.classList.add('active');
+        currentChunk = btn.dataset.chunk;
+        currentIndex = 0;
+        updateDayUI();
+      };
+    });
+
+    document.querySelectorAll('.mode-btn').forEach(btn => {
+      btn.onclick = () => {
+        document.querySelectorAll('.mode-btn').forEach(b => b.classList.remove('active'));
+        btn.classList.add('active');
+        currentMode = btn.dataset.mode;
+
+        document.getElementById('view-flashcard').style.display = currentMode === 'flashcard' ? 'flex' : 'none';
+        document.getElementById('view-listening').style.display = currentMode === 'listening' ? 'flex' : 'none';
+        document.getElementById('view-quiz').style.display = currentMode === 'quiz' ? 'flex' : 'none';
+        document.getElementById('view-reverse').style.display = currentMode === 'reverse' ? 'flex' : 'none';
+        document.getElementById('view-typing').style.display = currentMode === 'typing' ? 'flex' : 'none';
+        document.getElementById('view-table').style.display = currentMode === 'table' ? 'flex' : 'none';
+
+        if (currentMode === 'listening') loadListeningQuestion();
+        if (currentMode === 'quiz') loadQuizQuestion();
+        if (currentMode === 'reverse') loadReverseQuestion();
+        if (currentMode === 'typing') loadTypingQuestion();
+        if (currentMode === 'table') renderTable();
+      };
+    });
+
+    // Listening Audio Test
+    let listeningScore = 0;
+    let listeningTarget = null;
+    function loadListeningQuestion() {
+      const words = getActiveWords();
+      listeningTarget = words[Math.floor(Math.random() * words.length)];
+      document.getElementById('listening-score').textContent = 'Ball: ' + listeningScore;
+
+      speak(listeningTarget.word);
+      document.getElementById('listening-play-btn').onclick = () => speak(listeningTarget.word);
+
+      let choices = [listeningTarget];
+      let pool = words.filter(w => w.id !== listeningTarget.id).sort(() => Math.random() - 0.5);
+      choices.push(pool[0], pool[1], pool[2]);
+      choices.sort(() => Math.random() - 0.5);
+
+      const cont = document.getElementById('listening-options');
+      cont.innerHTML = '';
+      choices.forEach(c => {
+        const opt = document.createElement('button');
+        opt.className = 'test-opt';
+        opt.textContent = c.uz;
+        opt.onclick = () => {
+          if (c.id === listeningTarget.id) {
+            opt.classList.add('correct');
+            listeningScore += 10;
+            document.getElementById('listening-score').textContent = 'Ball: ' + listeningScore;
+            setTimeout(loadListeningQuestion, 1000);
+          } else {
+            opt.classList.add('wrong');
+            Array.from(cont.children).forEach(ch => {
+              if (ch.textContent === listeningTarget.uz) ch.classList.add('correct');
+            });
+            setTimeout(loadListeningQuestion, 1800);
+          }
+        };
+        cont.appendChild(opt);
+      });
+    }
+
+    // Standard Quiz (EN -> UZ)
+    let quizScoreVal = 0;
+    function loadQuizQuestion() {
+      const words = getActiveWords();
+      const target = words[Math.floor(Math.random() * words.length)];
+      document.getElementById('quiz-word').textContent = target.word;
+      document.getElementById('quiz-score').textContent = 'Ball: ' + quizScoreVal;
+      document.getElementById('quiz-audio-btn').onclick = () => speak(target.word);
+      speak(target.word);
+
+      let choices = [target];
+      let pool = words.filter(w => w.id !== target.id).sort(() => Math.random() - 0.5);
+      choices.push(pool[0], pool[1], pool[2]);
+      choices.sort(() => Math.random() - 0.5);
+
+      const cont = document.getElementById('quiz-options');
+      cont.innerHTML = '';
+      choices.forEach(c => {
+        const opt = document.createElement('button');
+        opt.className = 'test-opt';
+        opt.textContent = c.uz;
+        opt.onclick = () => {
+          if (c.id === target.id) {
+            opt.classList.add('correct');
+            quizScoreVal += 10;
+            setTimeout(loadQuizQuestion, 900);
+          } else {
+            opt.classList.add('wrong');
+            Array.from(cont.children).forEach(ch => { if (ch.textContent === target.uz) ch.classList.add('correct'); });
+            setTimeout(loadQuizQuestion, 1600);
+          }
+        };
+        cont.appendChild(opt);
+      });
+    }
+
+    // Reverse Quiz (UZ -> EN)
+    let reverseScoreVal = 0;
+    function loadReverseQuestion() {
+      const words = getActiveWords();
+      const target = words[Math.floor(Math.random() * words.length)];
+      document.getElementById('reverse-word').textContent = target.uz;
+      document.getElementById('reverse-score').textContent = 'Ball: ' + reverseScoreVal;
+
+      let choices = [target];
+      let pool = words.filter(w => w.id !== target.id).sort(() => Math.random() - 0.5);
+      choices.push(pool[0], pool[1], pool[2]);
+      choices.sort(() => Math.random() - 0.5);
+
+      const cont = document.getElementById('reverse-options');
+      cont.innerHTML = '';
+      choices.forEach(c => {
+        const opt = document.createElement('button');
+        opt.className = 'test-opt';
+        opt.textContent = c.word + ' (' + c.phonetic + ')';
+        opt.onclick = () => {
+          if (c.id === target.id) {
+            opt.classList.add('correct');
+            reverseScoreVal += 10;
+            speak(target.word);
+            setTimeout(loadReverseQuestion, 900);
+          } else {
+            opt.classList.add('wrong');
+            Array.from(cont.children).forEach(ch => {
+              if (ch.textContent.includes(target.word)) ch.classList.add('correct');
+            });
+            setTimeout(loadReverseQuestion, 1600);
+          }
+        };
+        cont.appendChild(opt);
+      });
+    }
+
+    // Typing
+    let typingTarget = null;
+    function loadTypingQuestion() {
+      const words = getActiveWords();
+      typingTarget = words[Math.floor(Math.random() * words.length)];
+      document.getElementById('typing-uz-word').textContent = typingTarget.uz;
+      document.getElementById('typing-hint-len').textContent = 'Harflar soni: ' + typingTarget.word.length + ' ta (' + typingTarget.phonetic + ') • Kalit so`z: ' + typingTarget.key;
+      document.getElementById('typing-msg').textContent = '';
+
+      const inp = document.getElementById('typing-user-input');
+      inp.value = '';
+      inp.focus();
+
+      speak(typingTarget.word);
+      document.getElementById('typing-play-audio').onclick = () => speak(typingTarget.word);
+    }
+
+    document.getElementById('typing-user-input').onkeydown = (e) => {
+      if (e.key === 'Enter') {
+        const val = e.target.value.trim().toLowerCase();
+        const msg = document.getElementById('typing-msg');
+        if (val === typingTarget.word.toLowerCase()) {
+          msg.textContent = "To'g'ri! Ajoyib! 🎉";
+          msg.style.color = "var(--success)";
+          speak(typingTarget.word);
+          setTimeout(loadTypingQuestion, 1100);
+        } else {
+          msg.textContent = "Noto'g'ri. To'g'ri javob: " + typingTarget.word;
+          msg.style.color = "var(--danger)";
+        }
+      }
+    };
+    document.getElementById('typing-skip-btn').onclick = loadTypingQuestion;
+
+    // Table view
+    function renderTable(filter = '') {
+      const tbody = document.getElementById('vocab-table-body');
+      tbody.innerHTML = '';
+      const q = filter.toLowerCase();
+      const words = getActiveWords().filter(w =>
+        w.word.toLowerCase().includes(q) || w.uz.toLowerCase().includes(q) || (w.key && w.key.toLowerCase().includes(q))
+      );
+
+      const dayLearned = masteredDict[currentDay] || [];
+      words.forEach(w => {
+        const tr = document.createElement('tr');
+        const isM = dayLearned.includes(w.id);
+        tr.innerHTML = '<td>' + w.id + '</td><td style="font-weight: 800;">' + w.word + '</td><td style="font-family: monospace; color: var(--text-muted);">' + w.phonetic + '</td><td>' + w.uz + '</td><td style="color: var(--warning); font-weight: 700;">' + (w.key || '-') + '</td><td style="font-size: 12px; color: var(--text-muted); font-style: italic;">' + (w.story || '') + '</td><td>' + (isM ? '✅ Yodlangan' : '⏳ Kutilmoqda') + '</td><td><button class="audio-btn-round" style="width: 32px; height: 32px; font-size: 14px;" onclick="speak(\'' + w.word + '\')">🔊</button></td>';
+        tbody.appendChild(tr);
+      });
+    }
+    document.getElementById('table-search').oninput = (e) => renderTable(e.target.value);
+
+    document.getElementById('toggle-calendar').onclick = () => {
+      const grid = document.getElementById('calendar-grid');
+      grid.style.display = grid.style.display === 'none' ? 'grid' : 'none';
+    };
+
+    document.getElementById('theme-toggle').onclick = () => {
+      const curr = document.documentElement.getAttribute('data-theme');
+      const next = curr === 'light' ? 'dark' : 'light';
+      document.documentElement.setAttribute('data-theme', next);
+      localStorage.setItem('lingo_theme', next);
+    };
+    if (localStorage.getItem('lingo_theme') === 'light') {
+      document.documentElement.setAttribute('data-theme', 'light');
+    }
+
+    document.getElementById('reset-day-btn').onclick = () => {
+      if (confirm(currentDay + '-kundagi natijalarni qayta boshlaysizmi?')) {
+        masteredDict[currentDay] = [];
+        reviewDict[currentDay] = [];
+        localStorage.setItem('lingo_mastered', JSON.stringify(masteredDict));
+        updateDayUI();
+        renderCalendar();
+      }
+    };
+
+    document.getElementById('import-btn').onclick = () => {
+      const dayInput = prompt("Qaysi kun uchun 100 ta so'z yuklamoqchisiz? (Masalan: 2):", (currentDay + 1).toString());
+      if (!dayInput) return;
+      const targetD = parseInt(dayInput);
+      if (isNaN(targetD) || targetD < 1 || targetD > 50) {
+        alert("Noto'g'ri kun raqami kiritildi!");
+        return;
+      }
+      const dataStr = prompt(targetD + "-kun uchun so'zlar ro'yxatini (JSON formatida) kiriting:");
+      if (!dataStr) return;
+      try {
+        const parsed = JSON.parse(dataStr);
+        if (Array.isArray(parsed) && parsed.length > 0) {
+          dayDataStore[targetD] = parsed;
+          localStorage.setItem('lingo_days_data', JSON.stringify(dayDataStore));
+          alert(targetD + "-kunga " + parsed.length + " ta so'z muvaffaqiyatli saqlandi!");
+          currentDay = targetD;
+          renderCalendar();
+          updateDayUI();
+        }
+      } catch (e) {
+        alert("Xatolik: kiritilgan ma'lumot to'g'ri formatda emas!");
+      }
+    };
+
+    function launchConfetti() {
+      const canvas = document.getElementById('confetti-canvas');
+      const ctx = canvas.getContext('2d');
+      canvas.width = window.innerWidth; canvas.height = window.innerHeight;
+      const p = Array.from({length: 120}, () => ({
+        x: canvas.width/2, y: canvas.height/2,
+        vx: (Math.random() - 0.5) * 18, vy: (Math.random() - 0.7) * 18,
+        size: Math.random() * 8 + 4, color: ['#6366f1', '#10b981', '#f59e0b', '#ec4899'][Math.floor(Math.random()*4)],
+        gravity: 0.3, life: 100
+      }));
+      let f = 0;
+      function a() {
+        ctx.clearRect(0, 0, canvas.width, canvas.height);
+        let active = false;
+        p.forEach(item => {
+          if (item.life > 0) {
+            item.x += item.vx; item.y += item.vy; item.vy += item.gravity; item.life--;
+            ctx.fillStyle = item.color; ctx.fillRect(item.x, item.y, item.size, item.size);
+            active = true;
+          }
+        });
+        if (active && f++ < 130) requestAnimationFrame(a); else ctx.clearRect(0,0,canvas.width,canvas.height);
+      }
+      a();
+    }
+
+    renderCalendar();
+    updateDayUI();
+  </script>
+</body>
+</html>
