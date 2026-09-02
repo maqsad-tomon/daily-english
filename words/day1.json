@@ -9,4 +9,4 @@
       {"id": 8, "set": 1, "word": "Achieve", "pos": "fe'l", "phonetic": "/əˈtʃiːv/", "uz": "erishmoq, qo'lga kiritmoq", "key": "Ochiv (ochib)", "story": "Kitobni har kuni ochib, yangi so'zlarni yodlagan bola barcha orzu qilgan marralariga erishdi.", "example": "You can achieve anything with hard work.", "ex_uz": "Mehnat bilan har narsaga erishishingiz mumkin."},
       {"id": 9, "set": 1, "word": "Improve", "pos": "fe'l", "phonetic": "/ɪmˈpruːv/", "uz": "yaxshilamoq, rivojlantirmoq", "key": "Imtihon Pro", "story": "Imtihonda 'Pro' darajaga chiqib ota-onamni xursand qilaman deb, har kuni inglizchamni yaxshiladim.", "example": "Listening to audio improves your speaking.", "ex_uz": "Audioni tinglash gapirishingizni yaxshilaydi."},
       {"id": 10, "set": 1, "word": "Opportunity", "pos": "ot", "phonetic": "/ˌɒp.əˈtjuː.nə.ti/", "uz": "imkoniyat, qulay vaziyat", "key": "Opa chipta", "story": "Opam Amerikaga tekin samolyot chiptasi yutib olib, hayotidagi eng zo'r imkoniyatga ega bo'ldi!", "example": "Don't miss this unique opportunity.", "ex_uz": "Ushbu noyob imkoniyatni qo'ldan boy bermang."}
-    ];
+    ]
