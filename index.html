@@ -484,9 +484,33 @@
     }
 
     /* SEARCH MODAL DEDICATED */
+    .search-scope-tabs {
+      display: flex;
+      gap: 6px;
+      margin-bottom: 12px;
+    }
+    .search-scope-btn {
+      flex: 1;
+      padding: 8px 10px;
+      border-radius: var(--radius-sm);
+      border: 1px solid var(--border);
+      background: var(--bg);
+      color: var(--text-muted);
+      font-size: 12px;
+      font-weight: 700;
+      cursor: pointer;
+      text-align: center;
+      transition: all 0.2s;
+    }
+    .search-scope-btn.active {
+      background: var(--primary);
+      color: #fff;
+      border-color: var(--primary);
+    }
+
     .search-input-box {
       position: relative;
-      margin-bottom: 14px;
+      margin-bottom: 12px;
     }
     .search-modal-input {
       width: 100%;
@@ -512,7 +536,7 @@
     }
     .search-results-list {
       overflow-y: auto;
-      max-height: 60vh;
+      max-height: 55vh;
       display: flex;
       flex-direction: column;
       gap: 8px;
@@ -526,7 +550,7 @@
       display: flex;
       justify-content: space-between;
       align-items: center;
-      transition: background 0.15s;
+      transition: background 0.15s, border-color 0.15s;
     }
     .search-card-item:hover, .search-card-item:active {
       background: var(--surface-card);
@@ -541,6 +565,17 @@
       font-size: 16px;
       font-weight: 800;
       color: var(--text);
+      display: flex;
+      align-items: center;
+      gap: 6px;
+    }
+    .search-item-badge {
+      font-size: 10px;
+      padding: 2px 6px;
+      border-radius: 6px;
+      background: var(--primary-light);
+      color: #818cf8;
+      font-weight: 700;
     }
     .search-item-uz {
       font-size: 13px;
@@ -848,13 +883,20 @@
     </div>
   </div>
 
-  <!-- Dedicated SEARCH MODAL -->
+  <!-- Dedicated SEARCH MODAL (GLOBAL & JORIY KUN) -->
   <div class="modal-backdrop" id="search-modal">
     <div class="modal-sheet" style="max-height: 85vh;">
       <div class="modal-header">
         <span class="modal-title">🔍 So'zlarni Qidirish</span>
         <button class="icon-btn" id="close-search-modal">✕</button>
       </div>
+
+      <!-- Qidiruv doirasi: Joriy kun yoki Barcha 50 kun (Global) -->
+      <div class="search-scope-tabs">
+        <button class="search-scope-btn active" id="search-scope-current">📅 Joriy kun (<span id="search-scope-day">1</span>-Kun)</button>
+        <button class="search-scope-btn" id="search-scope-all">🌐 Barcha 50 kun (Global)</button>
+      </div>
+
       <div class="search-input-box">
         <input type="text" class="search-modal-input" id="global-search-input" placeholder="Inglizcha, o'zbekcha yoki kalit so'z...">
         <button class="search-clear-btn" id="clear-search-btn" style="display:none;">✕</button>
@@ -946,6 +988,10 @@
         const res = await fetch('words/day' + d + '.json');
         if (res.ok) {
           const data = await res.json();
+          data.forEach((w, idx) => {
+            w.day = d;
+            w.indexInDay = idx;
+          });
           dayCache[d] = data;
           return data;
         }
@@ -991,6 +1037,8 @@
       document.getElementById('current-day-label').textContent = currentDay + '-Kun';
       document.getElementById('current-level-badge').textContent = theme.level;
       document.getElementById('theme-title-text').textContent = currentDay + '-kun: ' + theme.theme;
+      const scopeDayEl = document.getElementById('search-scope-day');
+      if (scopeDayEl) scopeDayEl.textContent = currentDay;
     }
 
     function renderStats() {
@@ -1251,7 +1299,8 @@
       words.forEach(w => {
         const div = document.createElement('div');
         div.className = 'table-item';
-        div.innerHTML = '<div><div class="table-word">' + w.word + ' <span style="font-size:12px;font-weight:400;color:var(--text-muted);">' + w.phonetic + '</span></div><div class="table-uz">' + w.uz + '</div></div><button class="audio-btn" style="width:34px;height:34px;font-size:14px;" onclick="speak(\'' + w.word + '\')">🔊</button>';
+        div.innerHTML = '<div><div class="table-word">' + w.word + ' <span style="font-size:12px;font-weight:400;color:var(--text-muted);">' + (w.phonetic || '') + '</span></div><div class="table-uz">' + w.uz + '</div></div><button class="audio-btn" style="width:34px;height:34px;font-size:14px;">🔊</button>';
+        div.querySelector('button').onclick = () => speak(w.word);
         list.appendChild(div);
       });
     }
@@ -1287,17 +1336,54 @@
       }
     }
 
-    // SEARCH MODAL LOGIC (DEDICATED SEARCH)
+    /* =========================================================
+       GLOBAL QIDIRUV (BARCHA 50 KUN BO'YICHA VA JORIY KUN)
+       ========================================================= */
     const searchModal = document.getElementById('search-modal');
     const searchInput = document.getElementById('global-search-input');
     const searchList = document.getElementById('search-results-list');
     const searchCount = document.getElementById('search-results-count');
     const clearSearchBtn = document.getElementById('clear-search-btn');
+    const scopeBtnCurrent = document.getElementById('search-scope-current');
+    const scopeBtnAll = document.getElementById('search-scope-all');
+    const scopeDayLabel = document.getElementById('search-scope-day');
+
+    let searchScope = 'current';
+    let isLoadingAll = false;
+
+    function setScope(scope) {
+      searchScope = scope;
+      if (scopeBtnCurrent && scopeBtnAll) {
+        scopeBtnCurrent.classList.toggle('active', scope === 'current');
+        scopeBtnAll.classList.toggle('active', scope === 'all');
+      }
+      performSearch(searchInput.value.trim());
+    }
+
+    if (scopeBtnCurrent) scopeBtnCurrent.onclick = () => setScope('current');
+    if (scopeBtnAll) scopeBtnAll.onclick = () => setScope('all');
+
+    async function ensureAllDaysLoaded() {
+      if (isLoadingAll) return;
+      isLoadingAll = true;
+      const promises = [];
+      for (let d = 1; d <= 50; d++) {
+        if (!dayCache[d]) {
+          promises.push(fetchWords(d));
+        }
+      }
+      if (promises.length > 0) {
+        searchCount.textContent = "Barcha 50 kunlik ma'lumotlar yuklanmoqda...";
+        await Promise.all(promises);
+      }
+      isLoadingAll = false;
+    }
 
     document.getElementById('open-search-modal').onclick = () => {
       searchModal.style.display = 'flex';
       searchInput.value = '';
       clearSearchBtn.style.display = 'none';
+      if (scopeDayLabel) scopeDayLabel.textContent = currentDay;
       performSearch('');
       setTimeout(() => searchInput.focus(), 100);
     };
@@ -1322,18 +1408,25 @@
       performSearch(q);
     };
 
-    function performSearch(query) {
+    async function performSearch(query) {
       searchList.innerHTML = '';
-      const allWords = dayCache[currentDay] || [];
       const q = query.toLowerCase();
 
-      const matched = query ? allWords.filter(w => 
-        w.word.toLowerCase().includes(q) || 
-        w.uz.toLowerCase().includes(q) || 
-        (w.key && w.key.toLowerCase().includes(q))
-      ) : allWords.slice(0, 30);
+      let wordsPool = [];
+      if (searchScope === 'current') {
+        wordsPool = dayCache[currentDay] || [];
+      } else {
+        await ensureAllDaysLoaded();
+        wordsPool = Object.values(dayCache).flat();
+      }
 
-      searchCount.textContent = (query ? matched.length : allWords.length) + ' ta so`z topildi';
+      const matched = query ? wordsPool.filter(w => 
+        (w.word && w.word.toLowerCase().includes(q)) || 
+        (w.uz && w.uz.toLowerCase().includes(q)) || 
+        (w.key && w.key.toLowerCase().includes(q))
+      ) : wordsPool.slice(0, 30);
+
+      searchCount.textContent = (query ? matched.length : wordsPool.length) + ' ta so`z topildi';
 
       if (matched.length === 0) {
         searchList.innerHTML = '<div style="text-align:center;padding:30px;color:var(--text-muted);">Hech narsa topilmadi 😕</div>';
@@ -1345,25 +1438,34 @@
         item.className = 'search-card-item';
         item.innerHTML = `
           <div class="search-item-left">
-            <div class="search-item-word">${w.word} <span style="font-size:12px;font-weight:400;color:var(--text-muted);">${w.phonetic || ''}</span></div>
-            <div class="search-item-uz">${w.uz}</div>
+            <div class="search-item-word">
+              ${w.word}
+              <span style="font-size:12px;font-weight:400;color:var(--text-muted);">${w.phonetic || ''}</span>
+              <span class="search-item-badge">${w.day || currentDay}-Kun</span>
+            </div>
+            <div class="search-item-uz">${w.uz || ''}</div>
             <div class="search-item-key">🧠 Kalit: ${w.key || '-'}</div>
           </div>
-          <button class="audio-btn" style="width:36px;height:36px;font-size:15px;" onclick="event.stopPropagation(); speak('${w.word}')">🔊</button>
+          <button class="audio-btn" style="width:36px;height:36px;font-size:15px;">🔊</button>
         `;
-        item.onclick = () => {
-          const targetIndex = allWords.findIndex(x => x.id === w.id);
-          if (targetIndex !== -1) {
-            currentIndex = targetIndex;
-            document.querySelectorAll('.nav-tab').forEach(t => t.classList.remove('active'));
-            document.querySelector('.nav-tab[data-mode="flashcard"]').classList.add('active');
-            currentMode = 'flashcard';
-            document.querySelectorAll('.mode-panel').forEach(p => p.style.display = 'none');
-            document.getElementById('view-flashcard').style.display = 'flex';
-            renderCard();
-          }
-          searchModal.style.display = 'none';
+
+        item.querySelector('button').onclick = (e) => {
+          e.stopPropagation();
+          speak(w.word);
         };
+
+        item.onclick = async () => {
+          searchModal.style.display = 'none';
+          const targetDay = w.day || currentDay;
+          await loadDay(targetDay, w.indexInDay || 0);
+
+          document.querySelectorAll('.nav-tab').forEach(t => t.classList.remove('active'));
+          document.querySelector('.nav-tab[data-mode="flashcard"]').classList.add('active');
+          currentMode = 'flashcard';
+          document.querySelectorAll('.mode-panel').forEach(p => p.style.display = 'none');
+          document.getElementById('view-flashcard').style.display = 'flex';
+        };
+
         searchList.appendChild(item);
       });
     }
