@@ -295,7 +295,7 @@
       opacity: 0.8;
     }
 
-    /* Card Back Details (Rasmsiz, toza matn ko'rinishi) */
+    /* Card Back Details */
     .uz-meaning {
       font-size: 26px;
       font-weight: 800;
@@ -966,6 +966,7 @@
       {"day": 50, "theme": "Oliy darajadagi C1/C2 so'z boyligi va yakun", "level": "C1-C2"}
     ];
 
+    // Zaxira namunaviy so'zlar:
     const fallbackDay1Words = [
       { id: 1, set: 1, pos: "fe'l", word: "abandon", phonetic: "/əˈbændən/", key: "Abad don", uz: "tashlab ketmoq, tark etmoq", story: "Abad don sepilgan dalasini qurg'oqchilik tufayli butunlay tashlab ketdi.", example: "He had to abandon his car in the snow.", ex_uz: "U mashinasini qorda qoldirib ketishga majbur bo'ldi." },
       { id: 2, set: 1, pos: "fe'l", word: "accept", phonetic: "/əkˈsept/", key: "Aktsent", uz: "qabul qilmoq, rozi bo'lmoq", story: "U aktsent bilan gapirsa ham, uni nufuzli universitetga qabul qilishdi.", example: "She decided to accept the job offer.", ex_uz: "U ish taklifini qabul qilishga qaror qildi." },
@@ -989,10 +990,55 @@
     let review = JSON.parse(localStorage.getItem('lingo_review') || '{}');
     let streak = parseInt(localStorage.getItem('lingo_streak') || '1');
 
-    /* AUDIO TALAFFUZ (Google TTS + SpeechSynthesis Fallback) */
+    /* =========================================================
+       PRO AUDIO TALAFFUZ TIZIMI (STUDIO NATIVE MP3 + TABIIY SINTESIZATOR)
+       ========================================================= */
     let currentAudioObj = null;
+    let bestVoice = null;
+    const audioUrlCache = {};
 
-    function speak(text) {
+    function initVoices() {
+      if (!('speechSynthesis' in window)) return;
+      const voices = window.speechSynthesis.getVoices();
+      if (!voices || voices.length === 0) return;
+
+      const enVoices = voices.filter(v => v.lang && v.lang.startsWith('en'));
+
+      bestVoice = enVoices.find(v => v.name.includes('Natural') || v.name.includes('Enhanced')) ||
+                  enVoices.find(v => v.name.includes('Google') && (v.lang === 'en-US' || v.lang === 'en_US')) ||
+                  enVoices.find(v => v.name.includes('Google') && v.lang.startsWith('en')) ||
+                  enVoices.find(v => v.name.includes('Samantha') || v.name.includes('Daniel') || v.name.includes('Karen')) ||
+                  enVoices.find(v => v.lang === 'en-US' || v.lang === 'en_US') ||
+                  enVoices[0] || null;
+    }
+
+    if ('speechSynthesis' in window) {
+      window.speechSynthesis.onvoiceschanged = initVoices;
+      initVoices();
+    }
+
+    async function getRealHumanAudioUrl(word) {
+      const clean = word.toLowerCase().trim();
+      if (audioUrlCache[clean]) return audioUrlCache[clean];
+
+      try {
+        const res = await fetch('https://api.dictionaryapi.dev/api/v2/entries/en/' + encodeURIComponent(clean));
+        if (res.ok) {
+          const data = await res.json();
+          if (Array.isArray(data) && data[0] && Array.isArray(data[0].phonetics)) {
+            for (const p of data[0].phonetics) {
+              if (p.audio && p.audio.trim() !== '') {
+                audioUrlCache[clean] = p.audio;
+                return p.audio;
+              }
+            }
+          }
+        }
+      } catch (e) {}
+      return null;
+    }
+
+    async function speak(text) {
       if (!text) return;
       const clean = text.trim();
 
@@ -1012,30 +1058,42 @@
         document.querySelectorAll('.audio-btn').forEach(b => b.classList.remove('playing'));
       }, 900);
 
-      try {
-        const audioUrl = 'https://translate.google.com/translate_tts?ie=UTF-8&client=tw-ob&tl=en&q=' + encodeURIComponent(clean);
-        const audio = new Audio(audioUrl);
-        currentAudioObj = audio;
-
-        const playPromise = audio.play();
-        if (playPromise !== undefined) {
-          playPromise.catch(() => {
-            speakWithSynthesis(clean);
-          });
+      // Bitta so'z bo'lsa, haqiqiy inson talaffuzidagi MP3 ni yangratadi
+      if (!clean.includes(' ')) {
+        const realMp3Url = await getRealHumanAudioUrl(clean);
+        if (realMp3Url) {
+          const audio = new Audio(realMp3Url);
+          currentAudioObj = audio;
+          const playPromise = audio.play();
+          if (playPromise !== undefined) {
+            playPromise.then(() => {
+              return;
+            }).catch(() => {
+              speakWithSynthesis(clean);
+            });
+            return;
+          }
         }
-      } catch(e) {
-        speakWithSynthesis(clean);
       }
+
+      // Jumla bo'lsa yoki MP3 mavjud bo'lmasa, tabiiy sintezator orqali o'qiydi
+      speakWithSynthesis(clean);
     }
 
     function speakWithSynthesis(text) {
-      if ('speechSynthesis' in window) {
-        window.speechSynthesis.cancel();
-        const u = new SpeechSynthesisUtterance(text);
-        u.lang = 'en-US';
-        u.rate = 0.9;
-        window.speechSynthesis.speak(u);
+      if (!('speechSynthesis' in window)) return;
+      window.speechSynthesis.cancel();
+
+      if (!bestVoice) initVoices();
+
+      const u = new SpeechSynthesisUtterance(text);
+      u.lang = 'en-US';
+      if (bestVoice) {
+        u.voice = bestVoice;
       }
+      u.rate = 0.88;
+      u.pitch = 1.0;
+      window.speechSynthesis.speak(u);
     }
 
     async function fetchWords(d) {
@@ -1055,7 +1113,6 @@
         console.warn('Fetch error for day', d);
       }
 
-      // Fayl topilmaganda yoki file:// rejimida 1-kun uchun zaxira:
       if (d === 1) {
         fallbackDay1Words.forEach((w, idx) => {
           w.day = 1;
@@ -1156,7 +1213,7 @@
     document.getElementById('fc-sound-back').onclick = (e) => {
       e.stopPropagation();
       const words = getActiveWords();
-      if (words.length > 0) speak(words[currentIndex % words.length].word);
+      if (words.length > 0) speak(words[currentIndex % words.length].example || words[currentIndex % words.length].word);
     };
 
     // Card Buttons
