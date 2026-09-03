@@ -152,7 +152,7 @@
       font-weight: 600;
     }
 
-    /* Chunks (1-20, 21-40...) */
+    /* Chunks */
     .chunks-bar {
       display: flex;
       gap: 6px;
@@ -179,7 +179,7 @@
       border-color: var(--primary);
     }
 
-    /* Flashcard */
+    /* Flashcard (Rasmsiz toza interfeys) */
     .card-container {
       flex: 1;
       perspective: 1000px;
@@ -242,10 +242,14 @@
       display: flex;
       align-items: center;
       justify-content: center;
-      transition: transform 0.15s;
+      transition: transform 0.15s, background 0.2s, box-shadow 0.2s;
     }
     .audio-btn:active {
       transform: scale(0.92);
+    }
+    .audio-btn.playing {
+      background: var(--success);
+      box-shadow: 0 0 16px var(--success);
     }
     .card-body-center {
       text-align: center;
@@ -291,7 +295,7 @@
       opacity: 0.8;
     }
 
-    /* Card Back Details */
+    /* Card Back Details (Rasmsiz, toza matn ko'rinishi) */
     .uz-meaning {
       font-size: 26px;
       font-weight: 800;
@@ -434,7 +438,7 @@
       border-radius: 24px 24px 0 0;
       border-top: 1px solid var(--border);
       padding: 20px 18px 30px 18px;
-      max-height: 80vh;
+      max-height: 85vh;
       display: flex;
       flex-direction: column;
       animation: slideUp 0.3s cubic-bezier(0.4, 0, 0.2, 1);
@@ -447,7 +451,7 @@
       display: flex;
       justify-content: space-between;
       align-items: center;
-      margin-bottom: 14px;
+      margin-bottom: 12px;
     }
     .modal-title {
       font-size: 16px;
@@ -483,19 +487,43 @@
       color: #fff;
     }
 
-    /* SEARCH MODAL DEDICATED */
+    /* Global Search Modal */
+    .search-scope-tabs {
+      display: flex;
+      gap: 6px;
+      margin-bottom: 10px;
+    }
+    .search-scope-btn {
+      flex: 1;
+      padding: 7px 10px;
+      border-radius: var(--radius-sm);
+      border: 1px solid var(--border);
+      background: var(--bg);
+      color: var(--text-muted);
+      font-size: 12px;
+      font-weight: 700;
+      cursor: pointer;
+      text-align: center;
+      transition: all 0.2s;
+    }
+    .search-scope-btn.active {
+      background: var(--primary);
+      color: #fff;
+      border-color: var(--primary);
+    }
+
     .search-input-box {
       position: relative;
-      margin-bottom: 14px;
+      margin-bottom: 10px;
     }
     .search-modal-input {
       width: 100%;
-      padding: 14px 44px 14px 16px;
+      padding: 12px 40px 12px 14px;
       background: var(--bg);
       border: 2px solid var(--primary);
       border-radius: var(--radius-sm);
       color: var(--text);
-      font-size: 16px;
+      font-size: 15px;
       font-weight: 600;
       outline: none;
     }
@@ -512,7 +540,7 @@
     }
     .search-results-list {
       overflow-y: auto;
-      max-height: 60vh;
+      max-height: 52vh;
       display: flex;
       flex-direction: column;
       gap: 8px;
@@ -521,12 +549,12 @@
       background: var(--bg);
       border: 1px solid var(--border);
       border-radius: 14px;
-      padding: 12px 14px;
+      padding: 10px 12px;
       cursor: pointer;
       display: flex;
       justify-content: space-between;
       align-items: center;
-      transition: background 0.15s;
+      transition: background 0.15s, border-color 0.15s;
     }
     .search-card-item:hover, .search-card-item:active {
       background: var(--surface-card);
@@ -538,9 +566,20 @@
       gap: 2px;
     }
     .search-item-word {
-      font-size: 16px;
+      font-size: 15px;
       font-weight: 800;
       color: var(--text);
+      display: flex;
+      align-items: center;
+      gap: 6px;
+    }
+    .search-item-badge {
+      font-size: 10px;
+      padding: 2px 6px;
+      border-radius: 6px;
+      background: var(--primary-light);
+      color: #818cf8;
+      font-weight: 700;
     }
     .search-item-uz {
       font-size: 13px;
@@ -685,8 +724,8 @@
       </button>
 
       <div class="top-stats">
-        <!-- SEARCH BUTTON (DEDICATED) -->
-        <button class="icon-btn" id="open-search-modal" title="So'zlarni qidirish">🔍</button>
+        <!-- GLOBAL SEARCH BUTTON -->
+        <button class="icon-btn" id="open-search-modal" title="So'zlarni qidirish (Global)">🔍</button>
 
         <div class="stat-pill" title="Yodlangan">
           <span style="color: var(--success);">✅</span>
@@ -711,7 +750,7 @@
       </div>
     </div>
 
-    <!-- Chunks Bar (1-20, 21-40...) -->
+    <!-- Chunks Bar -->
     <div class="chunks-bar">
       <button class="chunk-chip active" data-chunk="all">Barchasi (100)</button>
       <button class="chunk-chip" data-chunk="1">1-20</button>
@@ -721,7 +760,7 @@
       <button class="chunk-chip" data-chunk="5">81-100</button>
     </div>
 
-    <!-- View 1: Flashcard -->
+    <!-- View 1: Flashcard (Toza, rasmsiz mnemonik ko'rinish) -->
     <div class="mode-panel" id="view-flashcard" style="display: flex;">
       <div class="card-container">
         <div class="flip-card" id="flip-card">
@@ -729,7 +768,7 @@
           <div class="card-side front">
             <div class="card-header">
               <span class="tag" id="fc-pos">FE'L</span>
-              <button class="audio-btn" id="fc-sound-front">🔊</button>
+              <button class="audio-btn" id="fc-sound-front" title="Talaffuzni tinglash">🔊</button>
             </div>
             <div class="card-body-center">
               <div class="main-word" id="fc-word">...</div>
@@ -746,7 +785,7 @@
           <div class="card-side back">
             <div class="card-header">
               <span class="tag" style="background: rgba(16, 185, 129, 0.15); color: #34d399;">O'ZBEKCHA</span>
-              <button class="audio-btn" id="fc-sound-back">🔊</button>
+              <button class="audio-btn" id="fc-sound-back" title="Talaffuzni tinglash">🔊</button>
             </div>
             <div class="card-body-center">
               <div class="uz-meaning" id="fc-uz">...</div>
@@ -848,13 +887,20 @@
     </div>
   </div>
 
-  <!-- Dedicated SEARCH MODAL -->
+  <!-- Global Search Modal -->
   <div class="modal-backdrop" id="search-modal">
-    <div class="modal-sheet" style="max-height: 85vh;">
+    <div class="modal-sheet">
       <div class="modal-header">
         <span class="modal-title">🔍 So'zlarni Qidirish</span>
         <button class="icon-btn" id="close-search-modal">✕</button>
       </div>
+
+      <!-- Qidiruv doirasi: Joriy kun yoki Barcha 50 kun -->
+      <div class="search-scope-tabs">
+        <button class="search-scope-btn active" id="scope-btn-current">📅 Joriy kun (<span id="scope-day-num">1</span>-Kun)</button>
+        <button class="search-scope-btn" id="scope-btn-all">🌐 Barcha 50 kun (Global)</button>
+      </div>
+
       <div class="search-input-box">
         <input type="text" class="search-modal-input" id="global-search-input" placeholder="Inglizcha, o'zbekcha yoki kalit so'z...">
         <button class="search-clear-btn" id="clear-search-btn" style="display:none;">✕</button>
@@ -920,6 +966,19 @@
       {"day": 50, "theme": "Oliy darajadagi C1/C2 so'z boyligi va yakun", "level": "C1-C2"}
     ];
 
+    const fallbackDay1Words = [
+      { id: 1, set: 1, pos: "fe'l", word: "abandon", phonetic: "/əˈbændən/", key: "Abad don", uz: "tashlab ketmoq, tark etmoq", story: "Abad don sepilgan dalasini qurg'oqchilik tufayli butunlay tashlab ketdi.", example: "He had to abandon his car in the snow.", ex_uz: "U mashinasini qorda qoldirib ketishga majbur bo'ldi." },
+      { id: 2, set: 1, pos: "fe'l", word: "accept", phonetic: "/əkˈsept/", key: "Aktsent", uz: "qabul qilmoq, rozi bo'lmoq", story: "U aktsent bilan gapirsa ham, uni nufuzli universitetga qabul qilishdi.", example: "She decided to accept the job offer.", ex_uz: "U ish taklifini qabul qilishga qaror qildi." },
+      { id: 3, set: 1, pos: "fe'l", word: "admire", phonetic: "/ədˈmaɪər/", key: "Admiral", uz: "qoyil qolmoq, havas qilmoq", story: "Barcha dengizchilar jasur admiralning mahoratiga qoyil qolishardi.", example: "I really admire your dedication.", ex_uz: "Men sizning fidoyiligingizga chin dildan qoyil qolaman." },
+      { id: 4, set: 1, pos: "fe'l", word: "advise", phonetic: "/ədˈvaɪz/", key: "Edelveys", uz: "maslahat bermoq", story: "Shifokor unga tog'dagi edelveys gulidan damlama ichishni maslahat berdi.", example: "Doctors advise drinking more water.", ex_uz: "Shifokorlar ko'proq suv ichishni maslahat berishadi." },
+      { id: 5, set: 1, pos: "fe'l", word: "agree", phonetic: "/əˈɡriː/", key: "Agro", uz: "rozi bo'lmoq, qo'shilmoq", story: "Agro-firma yangi shartlarga to'liq rozi bo'ldi.", example: "I agree with your opinion.", ex_uz: "Men sizning fikringizga qo'shilaman." },
+      { id: 6, set: 1, pos: "fe'l", word: "allow", phonetic: "/əˈlaʊ/", key: "Olov", uz: "ruxsat bermoq", story: "O'rmonda olov yoqishga hech kim ruxsat bermaydi.", example: "Smoking is not allowed here.", ex_uz: "Bu yerda chekishga ruxsat berilmaydi." },
+      { id: 7, set: 1, pos: "fe'l", word: "appear", phonetic: "/əˈpɪər/", key: "Aperol", uz: "paydo bo'lmoq, ko'rinmoq", story: "Stol ustida to'satdan muzdek aperol kokteyli paydo bo'ldi.", example: "A rainbow appeared in the sky.", ex_uz: "Osmonda kamalak paydo bo'ldi." },
+      { id: 8, set: 1, pos: "fe'l", word: "arrive", phonetic: "/əˈraɪv/", key: "Arxiv", uz: "yetib kelmoq", story: "Poezd arxiv binosi yonidagi bekatga yetib keldi.", example: "We arrived at the station on time.", ex_uz: "Biz bekatga o'z vaqtida yetib keldik." },
+      { id: 9, set: 1, pos: "fe'l", word: "borrow", phonetic: "/ˈbɒr.əʊ/", key: "Borov", uz: "qarzga olmoq", story: "Do'stim Borovdan yangi kitobni bir haftaga qarzga oldim.", example: "Can I borrow your pen?", ex_uz: "Ruchkangizni olib tursam bo'ladimi?" },
+      { id: 10, set: 1, pos: "fe'l", word: "breathe", phonetic: "/briːð/", key: "Briz", uz: "nafas olmoq", story: "Dengiz shabadasida (briz) toza havodan to'yib nafas oldi.", example: "Breathe deeply and relax.", ex_uz: "Chuqur nafas oling va bo'shashing." }
+    ];
+
     let currentDay = parseInt(localStorage.getItem('lingo_day') || '1');
     let currentChunk = 'all';
     let currentMode = 'flashcard';
@@ -930,7 +989,46 @@
     let review = JSON.parse(localStorage.getItem('lingo_review') || '{}');
     let streak = parseInt(localStorage.getItem('lingo_streak') || '1');
 
+    /* AUDIO TALAFFUZ (Google TTS + SpeechSynthesis Fallback) */
+    let currentAudioObj = null;
+
     function speak(text) {
+      if (!text) return;
+      const clean = text.trim();
+
+      if (currentAudioObj) {
+        try {
+          currentAudioObj.pause();
+          currentAudioObj.currentTime = 0;
+        } catch(e) {}
+        currentAudioObj = null;
+      }
+      if ('speechSynthesis' in window) {
+        window.speechSynthesis.cancel();
+      }
+
+      document.querySelectorAll('.audio-btn').forEach(b => b.classList.add('playing'));
+      setTimeout(() => {
+        document.querySelectorAll('.audio-btn').forEach(b => b.classList.remove('playing'));
+      }, 900);
+
+      try {
+        const audioUrl = 'https://translate.google.com/translate_tts?ie=UTF-8&client=tw-ob&tl=en&q=' + encodeURIComponent(clean);
+        const audio = new Audio(audioUrl);
+        currentAudioObj = audio;
+
+        const playPromise = audio.play();
+        if (playPromise !== undefined) {
+          playPromise.catch(() => {
+            speakWithSynthesis(clean);
+          });
+        }
+      } catch(e) {
+        speakWithSynthesis(clean);
+      }
+    }
+
+    function speakWithSynthesis(text) {
       if ('speechSynthesis' in window) {
         window.speechSynthesis.cancel();
         const u = new SpeechSynthesisUtterance(text);
@@ -946,11 +1044,25 @@
         const res = await fetch('words/day' + d + '.json');
         if (res.ok) {
           const data = await res.json();
+          data.forEach((w, idx) => {
+            w.day = d;
+            w.indexInDay = idx;
+          });
           dayCache[d] = data;
           return data;
         }
       } catch (e) {
         console.warn('Fetch error for day', d);
+      }
+
+      // Fayl topilmaganda yoki file:// rejimida 1-kun uchun zaxira:
+      if (d === 1) {
+        fallbackDay1Words.forEach((w, idx) => {
+          w.day = 1;
+          w.indexInDay = idx;
+        });
+        dayCache = fallbackDay1Words;
+        return fallbackDay1Words;
       }
       return null;
     }
@@ -969,10 +1081,10 @@
 
       const words = await fetchWords(d);
       if (!words || words.length === 0) {
-        document.getElementById('fc-word').textContent = 'Fayl topilmadi';
+        document.getElementById('fc-word').textContent = 'Fayl kutilmoqda';
         document.getElementById('fc-phonetic').textContent = '';
         document.getElementById('fc-key').textContent = 'Kutilmoqda';
-        document.getElementById('fc-uz').textContent = 'GitHub-ga words/day' + d + '.json yuklang.';
+        document.getElementById('fc-uz').textContent = 'words/day' + d + '.json fayli topilmadi.';
         document.getElementById('fc-story').textContent = '';
         document.getElementById('fc-ex').textContent = '';
         document.getElementById('fc-ex-uz').textContent = '';
@@ -991,6 +1103,8 @@
       document.getElementById('current-day-label').textContent = currentDay + '-Kun';
       document.getElementById('current-level-badge').textContent = theme.level;
       document.getElementById('theme-title-text').textContent = currentDay + '-kun: ' + theme.theme;
+      const scopeDayEl = document.getElementById('scope-day-num');
+      if (scopeDayEl) scopeDayEl.textContent = currentDay;
     }
 
     function renderStats() {
@@ -1016,7 +1130,7 @@
 
       document.getElementById('fc-pos').textContent = (w.pos || 'SO`Z').toUpperCase();
       document.getElementById('fc-word').textContent = w.word;
-      document.getElementById('fc-phonetic').textContent = w.phonetic;
+      document.getElementById('fc-phonetic').textContent = w.phonetic || '';
       document.getElementById('fc-key').textContent = w.key || w.word;
 
       document.getElementById('fc-uz').textContent = w.uz;
@@ -1042,7 +1156,7 @@
     document.getElementById('fc-sound-back').onclick = (e) => {
       e.stopPropagation();
       const words = getActiveWords();
-      if (words.length > 0) speak(words[currentIndex % words.length].example || words[currentIndex % words.length].word);
+      if (words.length > 0) speak(words[currentIndex % words.length].word);
     };
 
     // Card Buttons
@@ -1246,12 +1360,21 @@
       list.innerHTML = '';
       const q = filter.toLowerCase();
       const words = getActiveWords().filter(w =>
-        w.word.toLowerCase().includes(q) || w.uz.toLowerCase().includes(q) || (w.key && w.key.toLowerCase().includes(q))
+        (w.word && w.word.toLowerCase().includes(q)) ||
+        (w.uz && w.uz.toLowerCase().includes(q)) ||
+        (w.key && w.key.toLowerCase().includes(q))
       );
       words.forEach(w => {
         const div = document.createElement('div');
         div.className = 'table-item';
-        div.innerHTML = '<div><div class="table-word">' + w.word + ' <span style="font-size:12px;font-weight:400;color:var(--text-muted);">' + w.phonetic + '</span></div><div class="table-uz">' + w.uz + '</div></div><button class="audio-btn" style="width:34px;height:34px;font-size:14px;" onclick="speak(\'' + w.word + '\')">🔊</button>';
+        div.innerHTML = `
+          <div>
+            <div class="table-word">${w.word} <span style="font-size:12px;font-weight:400;color:var(--text-muted);">${w.phonetic || ''}</span></div>
+            <div class="table-uz">${w.uz}</div>
+          </div>
+          <button class="audio-btn" style="width:34px;height:34px;font-size:14px;">🔊</button>
+        `;
+        div.querySelector('button').onclick = () => speak(w.word);
         list.appendChild(div);
       });
     }
@@ -1287,17 +1410,51 @@
       }
     }
 
-    // SEARCH MODAL LOGIC (DEDICATED SEARCH)
+    /* =========================================================
+       GLOBAL QIDIRUV (JORIY KUN + BARCHA 50 KUN)
+       ========================================================= */
     const searchModal = document.getElementById('search-modal');
     const searchInput = document.getElementById('global-search-input');
     const searchList = document.getElementById('search-results-list');
     const searchCount = document.getElementById('search-results-count');
     const clearSearchBtn = document.getElementById('clear-search-btn');
+    const scopeBtnCurrent = document.getElementById('scope-btn-current');
+    const scopeBtnAll = document.getElementById('scope-btn-all');
+
+    let currentSearchScope = 'current';
+    let isFetchingAllDays = false;
+
+    function switchSearchScope(scope) {
+      currentSearchScope = scope;
+      scopeBtnCurrent.classList.toggle('active', scope === 'current');
+      scopeBtnAll.classList.toggle('active', scope === 'all');
+      performSearch(searchInput.value.trim());
+    }
+
+    scopeBtnCurrent.onclick = () => switchSearchScope('current');
+    scopeBtnAll.onclick = () => switchSearchScope('all');
+
+    async function ensureAllDaysCached() {
+      if (isFetchingAllDays) return;
+      isFetchingAllDays = true;
+      const promises = [];
+      for (let d = 1; d <= 50; d++) {
+        if (!dayCache[d]) {
+          promises.push(fetchWords(d));
+        }
+      }
+      if (promises.length > 0) {
+        searchCount.textContent = "50 kunlik ma'lumotlar yuklanmoqda...";
+        await Promise.all(promises);
+      }
+      isFetchingAllDays = false;
+    }
 
     document.getElementById('open-search-modal').onclick = () => {
       searchModal.style.display = 'flex';
       searchInput.value = '';
       clearSearchBtn.style.display = 'none';
+      updateHeader();
       performSearch('');
       setTimeout(() => searchInput.focus(), 100);
     };
@@ -1322,18 +1479,26 @@
       performSearch(q);
     };
 
-    function performSearch(query) {
+    async function performSearch(query) {
       searchList.innerHTML = '';
-      const allWords = dayCache[currentDay] || [];
       const q = query.toLowerCase();
 
-      const matched = query ? allWords.filter(w => 
-        w.word.toLowerCase().includes(q) || 
-        w.uz.toLowerCase().includes(q) || 
-        (w.key && w.key.toLowerCase().includes(q))
-      ) : allWords.slice(0, 30);
+      let wordsPool = [];
 
-      searchCount.textContent = (query ? matched.length : allWords.length) + ' ta so`z topildi';
+      if (currentSearchScope === 'current') {
+        wordsPool = dayCache[currentDay] || [];
+      } else {
+        await ensureAllDaysCached();
+        wordsPool = Object.values(dayCache).flat();
+      }
+
+      const matched = query ? wordsPool.filter(w =>
+        (w.word && w.word.toLowerCase().includes(q)) ||
+        (w.uz && w.uz.toLowerCase().includes(q)) ||
+        (w.key && w.key.toLowerCase().includes(q))
+      ) : wordsPool.slice(0, 30);
+
+      searchCount.textContent = (query ? matched.length : wordsPool.length) + " ta so'z topildi";
 
       if (matched.length === 0) {
         searchList.innerHTML = '<div style="text-align:center;padding:30px;color:var(--text-muted);">Hech narsa topilmadi 😕</div>';
@@ -1345,24 +1510,29 @@
         item.className = 'search-card-item';
         item.innerHTML = `
           <div class="search-item-left">
-            <div class="search-item-word">${w.word} <span style="font-size:12px;font-weight:400;color:var(--text-muted);">${w.phonetic || ''}</span></div>
-            <div class="search-item-uz">${w.uz}</div>
+            <div class="search-item-word">
+              ${w.word}
+              <span style="font-size:12px;font-weight:400;color:var(--text-muted);">${w.phonetic || ''}</span>
+              <span class="search-item-badge">${w.day || currentDay}-Kun</span>
+            </div>
+            <div class="search-item-uz">${w.uz || ''}</div>
             <div class="search-item-key">🧠 Kalit: ${w.key || '-'}</div>
           </div>
-          <button class="audio-btn" style="width:36px;height:36px;font-size:15px;" onclick="event.stopPropagation(); speak('${w.word}')">🔊</button>
+          <button class="audio-btn" style="width:36px;height:36px;font-size:15px;">🔊</button>
         `;
-        item.onclick = () => {
-          const targetIndex = allWords.findIndex(x => x.id === w.id);
-          if (targetIndex !== -1) {
-            currentIndex = targetIndex;
-            document.querySelectorAll('.nav-tab').forEach(t => t.classList.remove('active'));
-            document.querySelector('.nav-tab[data-mode="flashcard"]').classList.add('active');
-            currentMode = 'flashcard';
-            document.querySelectorAll('.mode-panel').forEach(p => p.style.display = 'none');
-            document.getElementById('view-flashcard').style.display = 'flex';
-            renderCard();
-          }
+        item.querySelector('button').onclick = (e) => {
+          e.stopPropagation();
+          speak(w.word);
+        };
+        item.onclick = async () => {
           searchModal.style.display = 'none';
+          await loadDay(w.day || currentDay, w.indexInDay || 0);
+
+          document.querySelectorAll('.nav-tab').forEach(t => t.classList.remove('active'));
+          document.querySelector('.nav-tab[data-mode="flashcard"]').classList.add('active');
+          currentMode = 'flashcard';
+          document.querySelectorAll('.mode-panel').forEach(p => p.style.display = 'none');
+          document.getElementById('view-flashcard').style.display = 'flex';
         };
         searchList.appendChild(item);
       });
