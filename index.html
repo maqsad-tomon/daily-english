@@ -616,6 +616,7 @@
       text-align: center;
       font-weight: 700;
       outline: none;
+      transition: border-color 0.2s ease;
     }
     .typing-input:focus {
       border-color: var(--primary);
@@ -794,8 +795,14 @@
       <div class="quiz-card">
         <div style="font-size: 22px; font-weight: 800; color: var(--success); margin-bottom: 8px;" id="typing-uz">...</div>
         <button class="audio-btn" id="typing-sound-btn" style="margin: 0 auto 14px auto;">🔊</button>
-        <input type="text" class="typing-input" id="typing-input" placeholder="So'zni yozing va Enter bosing..." autocomplete="off">
-        <div id="typing-feedback" style="margin-top: 10px; font-size: 14px; font-weight: 700; min-height: 20px;"></div>
+        <div style="display: flex; flex-direction: column; gap: 10px;">
+          <input type="text" class="typing-input" id="typing-input" placeholder="Inglizcha so'zni yozing..." autocomplete="off">
+          <div style="display: flex; gap: 8px;">
+            <button class="btn-action btn-secondary" id="typing-skip-btn" style="flex: 0.8;">O'tkazish</button>
+            <button class="btn-action btn-master" id="typing-submit-btn" style="flex: 1.2;">✅ Tekshirish</button>
+          </div>
+        </div>
+        <div id="typing-feedback" style="margin-top: 12px; font-size: 15px; font-weight: 700; min-height: 24px;"></div>
       </div>
     </div>
 
@@ -1115,7 +1122,7 @@
       document.getElementById('listening-play-btn').onclick = () => speak(listeningTarget.word);
 
       let pool = words.filter(w => w.id !== listeningTarget.id).sort(() => Math.random() - 0.5);
-      let choices = [listeningTarget, pool[0], pool[1], pool[2]].filter(Boolean).sort(() => Math.random() - 0.5);
+      let choices = [listeningTarget, pool[0], pool, pool[2]].filter(Boolean).sort(() => Math.random() - 0.5);
 
       const cont = document.getElementById('listening-options');
       cont.innerHTML = '';
@@ -1146,7 +1153,7 @@
       speak(target.word);
 
       let pool = words.filter(w => w.id !== target.id).sort(() => Math.random() - 0.5);
-      let choices = [target, pool[0], pool[1], pool[2]].filter(Boolean).sort(() => Math.random() - 0.5);
+      let choices = [target, pool[0], pool, pool[2]].filter(Boolean).sort(() => Math.random() - 0.5);
 
       const cont = document.getElementById('quiz-options');
       cont.innerHTML = '';
@@ -1170,28 +1177,66 @@
 
     // Typing
     let typingWord = null;
+    let typingLocked = false;
+
     function loadTyping() {
       const words = getActiveWords();
       if (!words || words.length === 0) return;
+      typingLocked = false;
       typingWord = words[Math.floor(Math.random() * words.length)];
       document.getElementById('typing-uz').textContent = typingWord.uz;
-      document.getElementById('typing-input').value = '';
+      const inp = document.getElementById('typing-input');
+      inp.value = '';
+      inp.style.borderColor = 'var(--border)';
       document.getElementById('typing-feedback').textContent = '';
       speak(typingWord.word);
       document.getElementById('typing-sound-btn').onclick = () => speak(typingWord.word);
+      setTimeout(() => inp.focus(), 150);
     }
+
+    function checkTypingAnswer() {
+      if (!typingWord || typingLocked) return;
+      const inp = document.getElementById('typing-input');
+      const val = inp.value.trim().toLowerCase();
+      const fb = document.getElementById('typing-feedback');
+
+      if (!val) {
+        fb.textContent = "Iltimos, avval so'zni yozing!";
+        fb.style.color = "var(--warning)";
+        inp.focus();
+        return;
+      }
+
+      typingLocked = true;
+      if (val === typingWord.word.toLowerCase()) {
+        fb.textContent = "To'g'ri! Ajoyib 🎉";
+        fb.style.color = "var(--success)";
+        inp.style.borderColor = "var(--success)";
+        setTimeout(loadTyping, 1000);
+      } else {
+        fb.textContent = "Noto'g'ri! To'g'ri javob: " + typingWord.word;
+        fb.style.color = "var(--danger)";
+        inp.style.borderColor = "var(--danger)";
+        setTimeout(loadTyping, 2200);
+      }
+    }
+
+    document.getElementById('typing-submit-btn').onclick = checkTypingAnswer;
+
+    document.getElementById('typing-skip-btn').onclick = () => {
+      if (typingWord && !typingLocked) {
+        typingLocked = true;
+        const fb = document.getElementById('typing-feedback');
+        fb.textContent = "To'g'ri javob: " + typingWord.word;
+        fb.style.color = "var(--warning)";
+        setTimeout(loadTyping, 1500);
+      }
+    };
+
     document.getElementById('typing-input').onkeydown = (e) => {
       if (e.key === 'Enter') {
-        const val = e.target.value.trim().toLowerCase();
-        const fb = document.getElementById('typing-feedback');
-        if (val === typingWord.word.toLowerCase()) {
-          fb.textContent = "To'g'ri! Ajoyib 🎉";
-          fb.style.color = "var(--success)";
-          setTimeout(loadTyping, 900);
-        } else {
-          fb.textContent = "To'g'ri javob: " + typingWord.word;
-          fb.style.color = "var(--danger)";
-        }
+        e.preventDefault();
+        checkTypingAnswer();
       }
     };
 
