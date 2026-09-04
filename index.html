@@ -152,7 +152,7 @@
       font-weight: 600;
     }
 
-    /* Chunks (1-20, 21-40...) */
+    /* Chunks */
     .chunks-bar {
       display: flex;
       gap: 6px;
@@ -413,7 +413,7 @@
       background: var(--primary-light);
     }
 
-    /* Modal / Drawer for Day Selection */
+    /* Modal */
     .modal-backdrop {
       position: fixed;
       top: 0;
@@ -483,7 +483,7 @@
       color: #fff;
     }
 
-    /* SEARCH MODAL DEDICATED */
+    /* SEARCH MODAL */
     .search-scope-tabs {
       display: flex;
       gap: 6px;
@@ -684,7 +684,6 @@
       color: var(--text-muted);
     }
 
-    /* Desktop View Enhancement */
     @media (min-width: 768px) {
       body {
         padding: 24px;
@@ -720,9 +719,7 @@
       </button>
 
       <div class="top-stats">
-        <!-- SEARCH BUTTON (DEDICATED) -->
         <button class="icon-btn" id="open-search-modal" title="So'zlarni qidirish">🔍</button>
-
         <div class="stat-pill" title="Yodlangan">
           <span style="color: var(--success);">✅</span>
           <span id="stat-mastered">0</span>/100
@@ -746,7 +743,7 @@
       </div>
     </div>
 
-    <!-- Chunks Bar (1-20, 21-40...) -->
+    <!-- Chunks Bar -->
     <div class="chunks-bar">
       <button class="chunk-chip active" data-chunk="all">Barchasi (100)</button>
       <button class="chunk-chip" data-chunk="1">1-20</button>
@@ -883,7 +880,7 @@
     </div>
   </div>
 
-  <!-- Dedicated SEARCH MODAL (GLOBAL & JORIY KUN) -->
+  <!-- Dedicated SEARCH MODAL -->
   <div class="modal-backdrop" id="search-modal">
     <div class="modal-sheet" style="max-height: 85vh;">
       <div class="modal-header">
@@ -891,7 +888,6 @@
         <button class="icon-btn" id="close-search-modal">✕</button>
       </div>
 
-      <!-- Qidiruv doirasi: Joriy kun yoki Barcha 50 kun (Global) -->
       <div class="search-scope-tabs">
         <button class="search-scope-btn active" id="search-scope-current">📅 Joriy kun (<span id="search-scope-day">1</span>-Kun)</button>
         <button class="search-scope-btn" id="search-scope-all">🌐 Barcha 50 kun (Global)</button>
@@ -1169,8 +1165,29 @@
       speak(listeningTarget.word);
       document.getElementById('listening-play-btn').onclick = () => speak(listeningTarget.word);
 
-      let pool = words.filter(w => (w.id !== undefined && listeningTarget.id !== undefined ? w.id !== listeningTarget.id : w.word !== listeningTarget.word)).sort(() => Math.random() - 0.5);
-      let choices = [listeningTarget, pool[0], pool, pool].filter(Boolean).sort(() => Math.random() - 0.5);
+      const wrongChoices = [];
+      const usedUz = new Set([listeningTarget.uz]);
+      const shuffled = words
+        .filter(w => (w.id !== undefined && listeningTarget.id !== undefined ? w.id !== listeningTarget.id : w.word !== listeningTarget.word))
+        .sort(() => Math.random() - 0.5);
+
+      for (const w of shuffled) {
+        if (!usedUz.has(w.uz)) {
+          usedUz.add(w.uz);
+          wrongChoices.push(w);
+          if (wrongChoices.length === 3) break;
+        }
+      }
+      if (wrongChoices.length < 3) {
+        for (const w of shuffled) {
+          if (!wrongChoices.includes(w)) {
+            wrongChoices.push(w);
+            if (wrongChoices.length === 3) break;
+          }
+        }
+      }
+
+      const choices = [listeningTarget, ...wrongChoices].sort(() => Math.random() - 0.5);
 
       const cont = document.getElementById('listening-options');
       cont.innerHTML = '';
@@ -1179,10 +1196,11 @@
         btn.className = 'opt-btn';
         btn.textContent = c.uz;
         btn.onclick = () => {
+          Array.from(cont.children).forEach(b => b.style.pointerEvents = 'none');
           const isCorrect = (c.id !== undefined && listeningTarget.id !== undefined) ? c.id === listeningTarget.id : c.word === listeningTarget.word;
           if (isCorrect) {
             btn.classList.add('correct');
-            setTimeout(loadListening, 900);
+            setTimeout(loadListening, 800);
           } else {
             btn.classList.add('wrong');
             Array.from(cont.children).forEach(ch => { if (ch.textContent === listeningTarget.uz) ch.classList.add('correct'); });
@@ -1201,8 +1219,29 @@
       document.getElementById('quiz-word').textContent = target.word;
       speak(target.word);
 
-      let pool = words.filter(w => (w.id !== undefined && target.id !== undefined ? w.id !== target.id : w.word !== target.word)).sort(() => Math.random() - 0.5);
-      let choices = [target, pool[0], pool, pool].filter(Boolean).sort(() => Math.random() - 0.5);
+      const wrongChoices = [];
+      const usedUz = new Set([target.uz]);
+      const shuffled = words
+        .filter(w => (w.id !== undefined && target.id !== undefined ? w.id !== target.id : w.word !== target.word))
+        .sort(() => Math.random() - 0.5);
+
+      for (const w of shuffled) {
+        if (!usedUz.has(w.uz)) {
+          usedUz.add(w.uz);
+          wrongChoices.push(w);
+          if (wrongChoices.length === 3) break;
+        }
+      }
+      if (wrongChoices.length < 3) {
+        for (const w of shuffled) {
+          if (!wrongChoices.includes(w)) {
+            wrongChoices.push(w);
+            if (wrongChoices.length === 3) break;
+          }
+        }
+      }
+
+      const choices = [target, ...wrongChoices].sort(() => Math.random() - 0.5);
 
       const cont = document.getElementById('quiz-options');
       cont.innerHTML = '';
@@ -1211,10 +1250,11 @@
         btn.className = 'opt-btn';
         btn.textContent = c.uz;
         btn.onclick = () => {
+          Array.from(cont.children).forEach(b => b.style.pointerEvents = 'none');
           const isCorrect = (c.id !== undefined && target.id !== undefined) ? c.id === target.id : c.word === target.word;
           if (isCorrect) {
             btn.classList.add('correct');
-            setTimeout(loadQuiz, 900);
+            setTimeout(loadQuiz, 800);
           } else {
             btn.classList.add('wrong');
             Array.from(cont.children).forEach(ch => { if (ch.textContent === target.uz) ch.classList.add('correct'); });
@@ -1338,9 +1378,7 @@
       }
     }
 
-    /* =========================================================
-       GLOBAL QIDIRUV (BARCHA 50 KUN BO'YICHA VA JORIY KUN)
-       ========================================================= */
+    /* GLOBAL QIDIRUV */
     const searchModal = document.getElementById('search-modal');
     const searchInput = document.getElementById('global-search-input');
     const searchList = document.getElementById('search-results-list');
