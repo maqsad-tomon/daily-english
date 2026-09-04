@@ -1169,8 +1169,8 @@
       speak(listeningTarget.word);
       document.getElementById('listening-play-btn').onclick = () => speak(listeningTarget.word);
 
-      let pool = words.filter(w => w.id !== listeningTarget.id).sort(() => Math.random() - 0.5);
-      let choices = [listeningTarget, pool[0], pool, pool[2]].filter(Boolean).sort(() => Math.random() - 0.5);
+      let pool = words.filter(w => (w.id !== undefined && listeningTarget.id !== undefined ? w.id !== listeningTarget.id : w.word !== listeningTarget.word)).sort(() => Math.random() - 0.5);
+      let choices = [listeningTarget, pool[0], pool, pool].filter(Boolean).sort(() => Math.random() - 0.5);
 
       const cont = document.getElementById('listening-options');
       cont.innerHTML = '';
@@ -1179,7 +1179,8 @@
         btn.className = 'opt-btn';
         btn.textContent = c.uz;
         btn.onclick = () => {
-          if (c.id === listeningTarget.id) {
+          const isCorrect = (c.id !== undefined && listeningTarget.id !== undefined) ? c.id === listeningTarget.id : c.word === listeningTarget.word;
+          if (isCorrect) {
             btn.classList.add('correct');
             setTimeout(loadListening, 900);
           } else {
@@ -1200,8 +1201,8 @@
       document.getElementById('quiz-word').textContent = target.word;
       speak(target.word);
 
-      let pool = words.filter(w => w.id !== target.id).sort(() => Math.random() - 0.5);
-      let choices = [target, pool[0], pool, pool[2]].filter(Boolean).sort(() => Math.random() - 0.5);
+      let pool = words.filter(w => (w.id !== undefined && target.id !== undefined ? w.id !== target.id : w.word !== target.word)).sort(() => Math.random() - 0.5);
+      let choices = [target, pool[0], pool, pool].filter(Boolean).sort(() => Math.random() - 0.5);
 
       const cont = document.getElementById('quiz-options');
       cont.innerHTML = '';
@@ -1210,7 +1211,8 @@
         btn.className = 'opt-btn';
         btn.textContent = c.uz;
         btn.onclick = () => {
-          if (c.id === target.id) {
+          const isCorrect = (c.id !== undefined && target.id !== undefined) ? c.id === target.id : c.word === target.word;
+          if (isCorrect) {
             btn.classList.add('correct');
             setTimeout(loadQuiz, 900);
           } else {
