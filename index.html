@@ -968,13 +968,69 @@
     let review = JSON.parse(localStorage.getItem('lingo_review') || '{}');
     let streak = parseInt(localStorage.getItem('lingo_streak') || '1');
 
+    /* ==========================================
+       YUKORI SIFATLI OVOZ TIZIMI (STUDIO HD + NATURAL TTS)
+       ========================================== */
+    let currentAudio = null;
+    let preferredVoice = null;
+
+    function initVoices() {
+      if (!('speechSynthesis' in window)) return;
+      const voices = window.speechSynthesis.getVoices();
+      if (!voices || voices.length === 0) return;
+
+      const enVoices = voices.filter(v => v.lang && (v.lang.startsWith('en') || v.lang.includes('en_') || v.lang.includes('en-')));
+      if (enVoices.length === 0) return;
+
+      preferredVoice = enVoices.find(v => v.name.includes('Natural') && (v.lang.includes('US') || v.lang.includes('en-US')))
+        || enVoices.find(v => v.name.includes('Natural'))
+        || enVoices.find(v => v.name.includes('Google') && (v.lang.includes('US') || v.lang.includes('en-US')))
+        || enVoices.find(v => v.name.includes('Google'))
+        || enVoices.find(v => v.name.includes('Enhanced') || v.name.includes('Premium'))
+        || enVoices.find(v => v.name.includes('Samantha') || v.name.includes('Jenny') || v.name.includes('Aria') || v.name.includes('Siri'))
+        || enVoices.find(v => v.lang === 'en-US')
+        || enVoices[0];
+    }
+
+    if ('speechSynthesis' in window) {
+      window.speechSynthesis.onvoiceschanged = initVoices;
+      initVoices();
+    }
+
+    function speakWithTTS(text) {
+      if (!('speechSynthesis' in window)) return;
+      window.speechSynthesis.cancel();
+      const u = new SpeechSynthesisUtterance(text);
+      if (!preferredVoice) initVoices();
+      if (preferredVoice) u.voice = preferredVoice;
+      u.lang = 'en-US';
+      u.rate = 0.88;
+      u.pitch = 1.0;
+      window.speechSynthesis.speak(u);
+    }
+
     function speak(text) {
+      if (!text) return;
+      const clean = text.trim();
+
+      if (currentAudio) {
+        currentAudio.pause();
+        currentAudio = null;
+      }
       if ('speechSynthesis' in window) {
         window.speechSynthesis.cancel();
-        const u = new SpeechSynthesisUtterance(text);
-        u.lang = 'en-US';
-        u.rate = 0.9;
-        window.speechSynthesis.speak(u);
+      }
+
+      if (clean.split(/\s+/).length <= 3) {
+        const audioUrl = 'https://dict.youdao.com/dictvoice?audio=' + encodeURIComponent(clean) + '&type=2';
+        const audio = new Audio(audioUrl);
+        currentAudio = audio;
+
+        audio.play().catch(() => {
+          speakWithTTS(clean);
+        });
+      } else {
+        speakWithTTS(clean);
       }
     }
 
