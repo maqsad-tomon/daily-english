@@ -88,7 +88,7 @@
       min-height: 100vh;
       display: flex;
       flex-direction: column;
-      padding: 14px 16px 95px 16px;
+      padding: 12px 16px 85px 16px;
       position: relative;
     }
 
@@ -282,10 +282,11 @@
     /* Flashcard 3D */
     .card-container {
       flex: 1;
-      perspective: 1200px;
-      min-height: 420px;
+      perspective: 1000px;
+      -webkit-perspective: 1000px;
+      min-height: 350px;
       display: flex;
-      margin-bottom: 16px;
+      margin-bottom: 12px;
       position: relative;
       z-index: 2;
     }
@@ -293,45 +294,51 @@
       width: 100%;
       position: relative;
       transform-style: preserve-3d;
-      transition: transform 0.55s cubic-bezier(0.2, 0.85, 0.3, 1.15);
+      -webkit-transform-style: preserve-3d;
+      transition: transform 0.5s cubic-bezier(0.4, 0, 0.2, 1);
       cursor: pointer;
     }
     .flip-card.flipped {
       transform: rotateY(180deg);
+      -webkit-transform: rotateY(180deg);
     }
     .card-side {
       position: absolute;
+      top: 0;
+      left: 0;
       width: 100%;
       height: 100%;
-      backface-visibility: hidden;
-      -webkit-backface-visibility: hidden;
+      backface-visibility: hidden !important;
+      -webkit-backface-visibility: hidden !important;
       background: var(--surface-card);
       border: 1px solid var(--border);
       border-radius: var(--radius-xl);
-      padding: 24px 20px;
+      padding: 20px 18px;
       box-shadow: var(--shadow-card);
       display: flex;
       flex-direction: column;
       justify-content: space-between;
-      overflow: hidden;
       transition: border-color 0.3s;
+    }
+    .card-side.front {
+      transform: rotateY(0deg) translateZ(1px);
+      -webkit-transform: rotateY(0deg) translateZ(1px);
+      z-index: 2;
+    }
+    .card-side.back {
+      transform: rotateY(180deg) translateZ(1px);
+      -webkit-transform: rotateY(180deg) translateZ(1px);
+      background: var(--surface-card-back);
+      z-index: 1;
+    }
+    .flip-card.flipped .card-side.front {
+      z-index: 1;
+    }
+    .flip-card.flipped .card-side.back {
+      z-index: 2;
     }
     .card-side:hover {
       border-color: rgba(255, 255, 255, 0.15);
-    }
-    .card-side::before {
-      content: '';
-      position: absolute;
-      top: 0;
-      left: 0;
-      right: 0;
-      height: 120px;
-      background: linear-gradient(180deg, rgba(255, 255, 255, 0.03) 0%, transparent 100%);
-      pointer-events: none;
-    }
-    .card-side.back {
-      transform: rotateY(180deg);
-      background: var(--surface-card-back);
     }
 
     .card-header {
@@ -384,27 +391,18 @@
       z-index: 1;
     }
     .main-word {
-      font-size: 42px;
+      font-size: 38px;
       font-weight: 900;
       color: var(--text);
       letter-spacing: -1.2px;
       margin-bottom: 2px;
-      background: linear-gradient(180deg, var(--text) 30%, #cbd5e1 100%);
-      -webkit-background-clip: text;
-      -webkit-text-fill-color: transparent;
-      filter: drop-shadow(0 2px 10px rgba(0,0,0,0.2));
-    }
-    [data-theme="light"] .main-word {
-      background: linear-gradient(180deg, #0f172a 30%, #334155 100%);
-      -webkit-background-clip: text;
-      -webkit-text-fill-color: transparent;
     }
     .phonetic-text {
       font-family: 'JetBrains Mono', monospace;
       font-size: 15px;
       font-weight: 500;
       color: var(--text-muted);
-      margin-bottom: 18px;
+      margin-bottom: 16px;
       letter-spacing: 0.5px;
     }
     .key-box {
@@ -444,10 +442,10 @@
 
     /* Card Back Details */
     .uz-meaning {
-      font-size: 28px;
+      font-size: 26px;
       font-weight: 900;
       color: var(--success);
-      margin-bottom: 14px;
+      margin-bottom: 12px;
       letter-spacing: -0.5px;
       text-shadow: 0 2px 14px var(--success-glow);
     }
@@ -457,17 +455,17 @@
       border-top: 1px solid var(--border);
       border-right: 1px solid var(--border);
       border-bottom: 1px solid var(--border);
-      padding: 14px 16px;
+      padding: 12px 15px;
       border-radius: 0 var(--radius-sm) var(--radius-sm) 0;
       text-align: left;
-      margin-bottom: 12px;
+      margin-bottom: 10px;
       box-shadow: 0 4px 14px rgba(0, 0, 0, 0.15);
     }
     .story-label {
       font-size: 11px;
       font-weight: 800;
       color: var(--warning);
-      margin-bottom: 5px;
+      margin-bottom: 4px;
       display: flex;
       align-items: center;
       gap: 4px;
@@ -475,7 +473,7 @@
     .story-desc {
       font-size: 13px;
       color: #e2e8f0;
-      line-height: 1.55;
+      line-height: 1.5;
       font-weight: 500;
     }
     [data-theme="light"] .story-desc {
@@ -487,7 +485,7 @@
       border-top: 1px solid var(--border);
       border-right: 1px solid var(--border);
       border-bottom: 1px solid var(--border);
-      padding: 12px 16px;
+      padding: 10px 14px;
       border-radius: 0 var(--radius-sm) var(--radius-sm) 0;
       text-align: left;
     }
@@ -495,7 +493,7 @@
       font-size: 13px;
       font-weight: 700;
       color: var(--text);
-      margin-bottom: 4px;
+      margin-bottom: 3px;
       line-height: 1.4;
     }
     .example-uz {
@@ -513,7 +511,7 @@
     }
     .btn-action {
       flex: 1;
-      padding: 15px 12px;
+      padding: 14px 10px;
       border-radius: var(--radius);
       border: 1px solid var(--border);
       font-size: 14px;
@@ -561,10 +559,10 @@
       transform: translateY(-1px);
     }
 
-    /* Bottom Navigation Bar (Glassmorphic Floating Dock) */
+    /* Bottom Navigation Bar */
     .bottom-nav {
       position: fixed;
-      bottom: 12px;
+      bottom: 10px;
       left: 50%;
       transform: translateX(-50%);
       width: calc(100% - 24px);
@@ -573,7 +571,7 @@
       border: 1px solid rgba(255, 255, 255, 0.12);
       display: flex;
       justify-content: space-around;
-      padding: 7px 10px;
+      padding: 6px 8px;
       z-index: 100;
       backdrop-filter: blur(24px);
       -webkit-backdrop-filter: blur(24px);
@@ -597,7 +595,7 @@
       font-size: 11px;
       font-weight: 700;
       cursor: pointer;
-      padding: 6px 14px;
+      padding: 5px 12px;
       border-radius: 999px;
       transition: all 0.25s cubic-bezier(0.4, 0, 0.2, 1);
     }
@@ -617,7 +615,7 @@
       transform: scale(1.1);
     }
 
-    /* Mode Panels (Tests) */
+    /* Mode Panels */
     .mode-panel {
       display: none;
       flex-direction: column;
@@ -630,12 +628,12 @@
       background: var(--surface-card);
       border: 1px solid var(--border);
       border-radius: var(--radius-xl);
-      padding: 28px 20px;
+      padding: 26px 18px;
       text-align: center;
       box-shadow: var(--shadow-card);
     }
     .quiz-title {
-      font-size: 34px;
+      font-size: 32px;
       font-weight: 900;
       margin-bottom: 12px;
       letter-spacing: -0.5px;
@@ -644,10 +642,10 @@
       display: grid;
       grid-template-columns: 1fr;
       gap: 10px;
-      margin-top: 16px;
+      margin-top: 14px;
     }
     .opt-btn {
-      padding: 16px 20px;
+      padding: 15px 18px;
       background: var(--surface);
       border: 1px solid var(--border);
       color: var(--text);
@@ -689,12 +687,12 @@
     /* Typing Input */
     .typing-input {
       width: 100%;
-      padding: 16px 20px;
+      padding: 15px 18px;
       background: var(--bg);
       border: 2px solid var(--border);
       border-radius: var(--radius);
       color: var(--text);
-      font-size: 18px;
+      font-size: 17px;
       text-align: center;
       font-weight: 800;
       outline: none;
@@ -715,15 +713,11 @@
       box-shadow: var(--shadow-card);
     }
     .table-item {
-      padding: 14px 18px;
+      padding: 12px 16px;
       border-bottom: 1px solid var(--border);
       display: flex;
       justify-content: space-between;
       align-items: center;
-      transition: background 0.15s;
-    }
-    .table-item:hover {
-      background: rgba(255, 255, 255, 0.02);
     }
     .table-item:last-child {
       border-bottom: none;
@@ -768,7 +762,7 @@
       background: var(--surface-card);
       border-radius: 28px 28px 0 0;
       border-top: 1px solid rgba(255, 255, 255, 0.15);
-      padding: 22px 20px 36px 20px;
+      padding: 20px 18px 34px 18px;
       max-height: 82vh;
       display: flex;
       flex-direction: column;
@@ -783,7 +777,7 @@
       display: flex;
       justify-content: space-between;
       align-items: center;
-      margin-bottom: 16px;
+      margin-bottom: 14px;
     }
     .modal-title {
       font-size: 17px;
