@@ -372,13 +372,13 @@
     }
 
     .audio-btn {
-      width: 40px;
-      height: 40px;
+      width: 38px;
+      height: 38px;
       border-radius: 50%;
       background: linear-gradient(135deg, #6366f1, #4338ca);
       border: 1px solid rgba(255, 255, 255, 0.2);
       color: #fff;
-      font-size: 16px;
+      font-size: 15px;
       cursor: pointer;
       display: flex;
       align-items: center;
@@ -394,15 +394,20 @@
       transform: scale(0.92);
     }
 
-    /* YOUTUBE & MIC BUTTONS */
+    /* YOUTUBE (SO'Z VA GAP) & MIKROFON TUGMALARI */
+    .btn-header-group {
+      display: flex;
+      gap: 6px;
+      align-items: center;
+    }
     .yt-btn {
-      width: 40px;
-      height: 40px;
+      width: 38px;
+      height: 38px;
       border-radius: 50%;
       background: linear-gradient(135deg, #ef4444 0%, #dc2626 100%);
       border: 1px solid rgba(255, 255, 255, 0.25);
       color: #fff;
-      font-size: 15px;
+      font-size: 14px;
       cursor: pointer;
       display: flex;
       align-items: center;
@@ -419,14 +424,64 @@
       transform: scale(0.92);
     }
 
+    .yt-sentence-btn {
+      width: 38px;
+      height: 38px;
+      border-radius: 50%;
+      background: linear-gradient(135deg, #b91c1c 0%, #7f1d1d 100%);
+      border: 1px solid rgba(255, 255, 255, 0.25);
+      color: #fff;
+      font-size: 14px;
+      cursor: pointer;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      box-shadow: 0 4px 14px rgba(185, 28, 28, 0.45);
+      transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1);
+      flex-shrink: 0;
+    }
+    .yt-sentence-btn:hover {
+      transform: scale(1.08);
+      box-shadow: 0 6px 20px rgba(185, 28, 28, 0.65);
+    }
+    .yt-sentence-btn:active {
+      transform: scale(0.92);
+    }
+
+    .yt-sentence-pill {
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      margin-top: 8px;
+      background: linear-gradient(135deg, rgba(239, 68, 68, 0.2), rgba(185, 28, 28, 0.15));
+      border: 1px solid rgba(239, 68, 68, 0.45);
+      color: #fca5a5;
+      padding: 6px 12px;
+      border-radius: 999px;
+      font-size: 11px;
+      font-weight: 800;
+      cursor: pointer;
+      transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1);
+      box-shadow: 0 2px 8px rgba(0, 0, 0, 0.2);
+    }
+    .yt-sentence-pill:hover {
+      background: linear-gradient(135deg, rgba(239, 68, 68, 0.35), rgba(185, 28, 28, 0.28));
+      color: #fff;
+      transform: translateY(-1px);
+      box-shadow: 0 4px 14px rgba(239, 68, 68, 0.35);
+    }
+    .yt-sentence-pill:active {
+      transform: scale(0.96);
+    }
+
     .mic-btn {
-      width: 40px;
-      height: 40px;
+      width: 38px;
+      height: 38px;
       border-radius: 50%;
       background: linear-gradient(135deg, #8b5cf6 0%, #6d28d9 100%);
       border: 1px solid rgba(255, 255, 255, 0.25);
       color: #fff;
-      font-size: 16px;
+      font-size: 15px;
       cursor: pointer;
       display: flex;
       align-items: center;
@@ -1125,9 +1180,10 @@
           <div class="card-side front">
             <div class="card-header">
               <span class="tag" id="fc-pos">FE'L</span>
-              <div style="display: flex; gap: 7px; align-items: center;">
-                <button class="mic-btn" id="fc-mic-front" title="Talaffuzingizni tekshiring (Mikrofon)">🎤</button>
-                <button class="yt-btn" id="fc-yt-front" title="YouTube'da qidirish">▶️</button>
+              <div class="btn-header-group">
+                <button class="mic-btn" id="fc-mic-front" title="Aksent/talaffuzingizni tekshiring">🎤</button>
+                <button class="yt-btn" id="fc-yt-word-front" title="YouTube'da so'z videosi">▶️</button>
+                <button class="yt-sentence-btn" id="fc-yt-sent-front" title="YouTube'da gap videosi (so'z qatnashgan gaplar)">🎬</button>
                 <button class="audio-btn" id="fc-sound-front" title="Ovoz">🔊</button>
               </div>
             </div>
@@ -1152,9 +1208,10 @@
           <div class="card-side back">
             <div class="card-header">
               <span class="tag" style="background: rgba(16, 185, 129, 0.15); color: #34d399; border-color: rgba(16, 185, 129, 0.3);">O'ZBEKCHA</span>
-              <div style="display: flex; gap: 7px; align-items: center;">
-                <button class="mic-btn" id="fc-mic-back" title="Talaffuzingizni tekshiring (Mikrofon)">🎤</button>
-                <button class="yt-btn" id="fc-yt-back" title="YouTube'da qidirish">▶️</button>
+              <div class="btn-header-group">
+                <button class="mic-btn" id="fc-mic-back" title="Aksent/talaffuzingizni tekshiring">🎤</button>
+                <button class="yt-btn" id="fc-yt-word-back" title="YouTube'da so'z videosi">▶️</button>
+                <button class="yt-sentence-btn" id="fc-yt-sent-back" title="YouTube'da gap videosi (so'z qatnashgan gaplar)">🎬</button>
                 <button class="audio-btn" id="fc-sound-back" title="Ovoz">🔊</button>
               </div>
             </div>
@@ -1167,6 +1224,9 @@
               <div class="example-box">
                 <div class="example-en" id="fc-ex">...</div>
                 <div class="example-uz" id="fc-ex-uz">...</div>
+                <button class="yt-sentence-pill" id="fc-yt-sentence-pill" title="Ushbu so'z qatnashgan gap videosini YouTube'da ko'rish">
+                  <span>🎬</span> Gap videosini ko'rish (YouTube)
+                </button>
               </div>
               <div style="margin-top: 6px;">
                 <div id="pronounce-box-back" class="pronounce-box listening" style="display: none;">
@@ -1372,7 +1432,7 @@
         || enVoices.find(v => v.name.includes('Google'))
         || enVoices.find(v => v.name.includes('Enhanced') || v.name.includes('Premium'))
         || enVoices.find(v => v.name.includes('Samantha') || v.name.includes('Jenny') || v.name.includes('Aria') || v.name.includes('Siri'))
-        || enVoices.find(v => v.lang === 'en-US')
+        || enVoices.lang === 'en-US'
         || enVoices[0];
     }
 
@@ -1518,7 +1578,7 @@
     // Card Flip
     const flipCard = document.getElementById('flip-card');
     flipCard.onclick = (e) => {
-      if (e.target.closest('.audio-btn') || e.target.closest('.yt-btn') || e.target.closest('.mic-btn')) return;
+      if (e.target.closest('.audio-btn') || e.target.closest('.yt-btn') || e.target.closest('.yt-sentence-btn') || e.target.closest('.yt-sentence-pill') || e.target.closest('.mic-btn')) return;
       flipCard.classList.toggle('flipped');
     };
 
@@ -1785,8 +1845,9 @@
       words.forEach(w => {
         const div = document.createElement('div');
         div.className = 'table-item';
-        div.innerHTML = '<div><div class="table-word">' + w.word + ' <span style="font-size:12px;font-weight:400;color:var(--text-muted);">' + (w.phonetic || '') + '</span></div><div class="table-uz">' + w.uz + '</div></div><div style="display:flex;gap:6px;align-items:center;"><button class="yt-btn table-yt-btn" style="width:34px;height:34px;font-size:13px;" title="YouTube">▶️</button><button class="audio-btn" style="width:34px;height:34px;font-size:14px;">🔊</button></div>';
-        div.querySelector('.table-yt-btn').onclick = (e) => { e.stopPropagation(); openYouTube(w); };
+        div.innerHTML = '<div><div class="table-word">' + w.word + ' <span style="font-size:12px;font-weight:400;color:var(--text-muted);">' + (w.phonetic || '') + '</span></div><div class="table-uz">' + w.uz + '</div></div><div style="display:flex;gap:5px;align-items:center;"><button class="yt-sentence-btn table-yt-sent-btn" style="width:32px;height:32px;font-size:12px;" title="Gap videosi">🎬</button><button class="yt-btn table-yt-btn" style="width:32px;height:32px;font-size:12px;" title="So\'z videosi">▶️</button><button class="audio-btn" style="width:32px;height:32px;font-size:13px;" title="Ovoz">🔊</button></div>';
+        div.querySelector('.table-yt-sent-btn').onclick = (e) => { e.stopPropagation(); openYouTubeSentence(w); };
+        div.querySelector('.table-yt-btn').onclick = (e) => { e.stopPropagation(); openYouTubeWord(w); };
         div.querySelector('.audio-btn').onclick = (e) => { e.stopPropagation(); speak(w.word); };
         list.appendChild(div);
       });
@@ -1931,15 +1992,20 @@
             <div class="search-item-uz">${w.uz || ''}</div>
             <div class="search-item-key">🧠 Kalit: ${w.key || '-'}</div>
           </div>
-          <div style="display:flex;gap:6px;align-items:center;">
-            <button class="yt-btn search-yt-btn" style="width:36px;height:36px;font-size:13px;" title="YouTube">▶️</button>
-            <button class="audio-btn" style="width:36px;height:36px;font-size:15px;">🔊</button>
+          <div style="display:flex;gap:5px;align-items:center;">
+            <button class="yt-sentence-btn search-yt-sent-btn" style="width:34px;height:34px;font-size:12px;" title="Gap videosi">🎬</button>
+            <button class="yt-btn search-yt-btn" style="width:34px;height:34px;font-size:12px;" title="So'z videosi">▶️</button>
+            <button class="audio-btn" style="width:34px;height:34px;font-size:14px;" title="Ovoz">🔊</button>
           </div>
         `;
 
+        item.querySelector('.search-yt-sent-btn').onclick = (e) => {
+          e.stopPropagation();
+          openYouTubeSentence(w);
+        };
         item.querySelector('.search-yt-btn').onclick = (e) => {
           e.stopPropagation();
-          openYouTube(w);
+          openYouTubeWord(w);
         };
         item.querySelector('.audio-btn').onclick = (e) => {
           e.stopPropagation();
@@ -1974,9 +2040,10 @@
     }
 
     /* ==========================================
-       1. YOUTUBE TO'G'RIDAN-TO'G'RI QIDIRUV (1-CLICK)
+       1. YOUTUBE TO'G'RIDAN-TO'G'RI VIDEOLAR (SO'Z & GAP)
        ========================================== */
-    function openYouTube(w) {
+    // 1-TUGMA: So'zning o'zi talaffuzi videosi
+    function openYouTubeWord(w) {
       if (!w || !w.word) return;
       if (w.youtube || w.video) {
         window.open(w.youtube || w.video, '_blank');
@@ -1986,16 +2053,48 @@
       window.open(`https://www.youtube.com/results?search_query=${q}`, '_blank');
     }
 
-    document.getElementById('fc-yt-front').onclick = (e) => {
+    // 2-TUGMA: So'z qatnashgan GAP videosi (misollar va gapda qo'llanishi)
+    function openYouTubeSentence(w) {
+      if (!w || !w.word) return;
+      if (w.youtube_sentence) {
+        window.open(w.youtube_sentence, '_blank');
+        return;
+      }
+      const ex = (w.example || w.ex || '').trim();
+      const queryText = ex ? `how to use "${w.word.trim()}" in a sentence` : `"${w.word.trim()}" in a sentence examples`;
+      const q = encodeURIComponent(queryText);
+      window.open(`https://www.youtube.com/results?search_query=${q}`, '_blank');
+    }
+
+    // Headerdagi So'z videosi tugmalari (▶️)
+    document.getElementById('fc-yt-word-front').onclick = (e) => {
       e.stopPropagation();
       const words = getActiveWords();
-      if (words.length > 0) openYouTube(words[currentIndex % words.length]);
+      if (words.length > 0) openYouTubeWord(words[currentIndex % words.length]);
+    };
+    document.getElementById('fc-yt-word-back').onclick = (e) => {
+      e.stopPropagation();
+      const words = getActiveWords();
+      if (words.length > 0) openYouTubeWord(words[currentIndex % words.length]);
     };
 
-    document.getElementById('fc-yt-back').onclick = (e) => {
+    // Headerdagi Gap videosi tugmalari (🎬)
+    document.getElementById('fc-yt-sent-front').onclick = (e) => {
       e.stopPropagation();
       const words = getActiveWords();
-      if (words.length > 0) openYouTube(words[currentIndex % words.length]);
+      if (words.length > 0) openYouTubeSentence(words[currentIndex % words.length]);
+    };
+    document.getElementById('fc-yt-sent-back').onclick = (e) => {
+      e.stopPropagation();
+      const words = getActiveWords();
+      if (words.length > 0) openYouTubeSentence(words[currentIndex % words.length]);
+    };
+
+    // Orqa tarafdagi misol gap tagidagi katta tugma (🎬 Gap videosini ko'rish)
+    document.getElementById('fc-yt-sentence-pill').onclick = (e) => {
+      e.stopPropagation();
+      const words = getActiveWords();
+      if (words.length > 0) openYouTubeSentence(words[currentIndex % words.length]);
     };
 
     /* ==========================================
@@ -2103,13 +2202,10 @@
           const pct = Math.round(bestScore * 100);
 
           if (bestScore >= 0.8) {
-            // A'lo talaffuz!
             showPronounceStatus('success', '✅', `To‘g‘ri! Ajoyib talaffuz! (${pct}%) • "${bestHeard}"`);
           } else if (bestScore >= 0.5) {
-            // Yaqin keldi
             showPronounceStatus('warning', '⚠️', `Yaqin: "${bestHeard}" (${pct}%). Yana bir bor aniqroq ayting!`);
           } else {
-            // Noto'g'ri
             showPronounceStatus('error', '❌', `Noto‘g‘ri: "${bestHeard || 'tushunarsiz'}". Kerak: "${targetWord}"`);
           }
         };
